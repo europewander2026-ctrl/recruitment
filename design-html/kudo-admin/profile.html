@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile | ImmiHire</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        heading: ['"Montserrat"', 'sans-serif'],
+                        mono: ['"Space Mono"', 'monospace'],
+                    },
+                    colors: {
+                        primary: '#0d5fb7',
+                        darkBlue: '#002366',
+                        lightBg: '#f8fafc',
+                        accent: '#090927',
+                        successGreen: '#10b981',
+                        accentBlue: '#3b82f6',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'card': '0 10px 30px -5px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 15px rgba(13, 95, 183, 0.2)',
+                        'inner-light': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.3)',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base Styles */
+        body {
+            background-color: #f1f5f9;
+            color: #334155;
+            overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* 1. Sidebar Styles (Consistent) */
+        .sidebar {
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
+            z-index: 30;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            color: #64748b;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+            font-weight: 500;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #f0f9ff;
+            color: #0d5fb7;
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #0d5fb7;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* 2. Lenticular Badge (The Twist) */
+        .badge-container {
+            perspective: 1000px;
+            width: 100%;
+            height: 280px;
+        }
+
+        .lenticular-card {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            border-radius: 24px;
+            border: 1px solid white;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Moving Background Pattern */
+        .lenticular-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background-image: radial-gradient(#0d5fb7 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+            transform: translateZ(-50px);
+            /* Push back for parallax */
+            pointer-events: none;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Photo with Depth */
+        .badge-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transform: translateZ(30px);
+            /* Pop out */
+            position: relative;
+            z-index: 10;
+        }
+
+        .badge-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Floating Info */
+        .badge-info {
+            text-align: center;
+            transform: translateZ(20px);
+            margin-top: 1rem;
+        }
+
+        /* Holographic Sheen */
+        .lenticular-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(125deg, transparent 30%, rgba(255, 255, 255, 0.4) 45%, transparent 60%);
+            mix-blend-mode: overlay;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .lenticular-card:hover::after {
+            opacity: 1;
+        }
+
+        /* 3. Heatmap Grid */
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(52, 1fr);
+            /* 52 weeks */
+            gap: 3px;
+        }
+
+        .heat-cell {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 2px;
+            background: #e2e8f0;
+            transition: transform 0.2s;
+        }
+
+        .heat-cell:hover {
+            transform: scale(1.5);
+            z-index: 10;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .heat-l1 {
+            background: #bbf7d0;
+        }
+
+        .heat-l2 {
+            background: #4ade80;
+        }
+
+        .heat-l3 {
+            background: #22c55e;
+        }
+
+        .heat-l4 {
+            background: #15803d;
+        }
+
+        /* 4. 3D Keycard (Flip Interaction) */
+        .keycard-container {
+            perspective: 1000px;
+            width: 100%;
+            height: 200px;
+            cursor: pointer;
+        }
+
+        .keycard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .keycard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .keycard-front,
+        .keycard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .keycard-front {
+            background: linear-gradient(135deg, #002366 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.5rem;
+            color: white;
+        }
+
+        .keycard-back {
+            background: #f8fafc;
+            transform: rotateY(180deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e2e8f0;
+        }
+
+        /* Gold Chip */
+        .sim-chip {
+            width: 45px;
+            height: 35px;
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .sim-chip::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(0, 0, 0, 0.2) 11px);
+            border-radius: 6px;
+        }
+
+        /* Input Styling */
+        .profile-input {
+            width: 100%;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+            color: #334155;
+            transition: all 0.3s;
+        }
+
+        .profile-input:focus {
+            outline: none;
+            border-color: #0d5fb7;
+            box-shadow: 0 0 0 3px rgba(13, 95, 183, 0.1);
+        }
+
+        /* Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            filter: blur(5px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
+    </style>
+</head>
+
+<body class="flex h-screen bg-slate-50">
+
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 hidden lg:flex flex-col z-20">
+        <div class="p-6 flex items-center gap-3 border-b border-gray-100">
+            <img src="https://demo.hmhlabz.com/immihire/wp-content/uploads/immihire-logo.webp" alt="ImmiHire Logo"
+                class="w-8 h-8 object-contain">
+            <h1 class="font-heading font-bold text-xl text-darkBlue tracking-tight">Immi<span
+                    class="text-primary">Hire</span></h1>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-1">
+            <p class="text-xs font-bold text-gray-400 uppercase px-4 mb-3 tracking-wider">Main Menu</p>
+            <a href="dashboard.html" class="nav-link">
+                <i class="fa-solid fa-grid-2 text-lg"></i> Dashboard
+            </a>
+            <a href="applications.html" class="nav-link">
+                <i class="fa-solid fa-users text-lg"></i> Applications
+                <span class="ml-auto bg-blue-100 text-primary text-xs font-bold px-2 py-0.5 rounded-full">12</span>
+            </a>
+            <a href="recruitment.html" class="nav-link">
+                <i class="fa-solid fa-briefcase text-lg"></i> Recruitment
+            </a>
+
+            <p class="text-xs font-bold text-gray-400 uppercase px-4 mt-8 mb-3 tracking-wider">Content</p>
+            <a href="insights.html" class="nav-link">
+                <i class="fa-solid fa-newspaper text-lg"></i> Insights / Blog
+            </a>
+            <a href="website-cms.html" class="nav-link">
+                <i class="fa-solid fa-globe text-lg"></i> Website CMS
+            </a>
+
+            <p class="text-xs font-bold text-gray-400 uppercase px-4 mt-8 mb-3 tracking-wider">System</p>
+            <a href="settings.html" class="nav-link">
+                <i class="fa-solid fa-gear text-lg"></i> Settings
+            </a>
+            <a href="login.html" class="nav-link text-red-500 hover:text-red-600 hover:bg-red-50">
+                <i class="fa-solid fa-power-off text-lg"></i> Logout
+            </a>
+        </nav>
+
+        <!-- User Mini Profile -->
+        <div class="p-4 border-t border-gray-100 bg-gray-50/50">
+            <a href="profile.html"
+                class="flex items-center gap-3 p-2 rounded-xl cursor-pointer bg-white border border-gray-200 shadow-sm">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=100&auto=format&fit=crop"
+                    class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm">
+                <div>
+                    <p class="text-sm font-bold text-gray-800">Satakshi Singh</p>
+                    <p class="text-xs text-gray-500">Super Admin</p>
+                </div>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden relative">
+
+        <!-- Top Bar -->
+        <header
+            class="h-20 bg-white/80 backdrop-blur-md border-b border-gray-200 flex items-center justify-between px-8 z-10 sticky top-0">
+            <h2 class="font-heading font-bold text-2xl text-darkBlue">My Profile</h2>
+            <button
+                class="bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-lg shadow-blue-500/20 transition-all">
+                Save Changes
+            </button>
+        </header>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-8 scroll-smooth bg-slate-50">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                <!-- Left Column: Identity & Access -->
+                <div class="space-y-8">
+
+                    <!-- 1. Lenticular Badge Card (The Twist) -->
+                    <div class="badge-container reveal active">
+                        <div class="lenticular-card" id="badge-card">
+                            <div class="badge-photo">
+                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=300&auto=format&fit=crop"
+                                    alt="Profile">
+                            </div>
+                            <div class="badge-info">
+                                <h3 class="font-heading font-bold text-xl text-darkBlue">Satakshi Singh</h3>
+                                <p class="text-primary font-bold text-xs uppercase tracking-widest mt-1">Super
+                                    Administrator</p>
+                                <div class="mt-4 flex justify-center gap-2">
+                                    <span
+                                        class="bg-green-100 text-green-700 text-[0.6rem] font-bold px-2 py-1 rounded border border-green-200">ACTIVE</span>
+                                    <span
+                                        class="bg-blue-100 text-blue-700 text-[0.6rem] font-bold px-2 py-1 rounded border border-blue-200">VERIFIED</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Security Keycard (Flip Interaction) -->
+                    <div class="keycard-container reveal delay-100"
+                        onclick="this.querySelector('.keycard').classList.toggle('flipped')">
+                        <div class="keycard">
+                            <!-- Front -->
+                            <div class="keycard-front">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-mono text-sm tracking-widest opacity-70">ACCESS LEVEL</h4>
+                                    <img src="https://demo.hmhlabz.com/immihire/wp-content/uploads/immihire-logo.webp"
+                                        class="w-6 h-6 brightness-0 invert opacity-50">
+                                </div>
+                                <h2 class="font-heading font-bold text-4xl text-white mt-2">LEVEL 5</h2>
+                                <div class="mt-auto flex justify-between items-end">
+                                    <div class="sim-chip"></div>
+                                    <p class="font-mono text-[0.6rem] opacity-60">ID: 992-883-110</p>
+                                </div>
+                            </div>
+                            <!-- Back -->
+                            <div class="keycard-back">
+                                <div class="text-center">
+                                    <i class="fa-solid fa-qrcode text-6xl text-darkBlue mb-2"></i>
+                                    <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">Scan for 2FA
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column: Details & Stats -->
+                <div class="lg:col-span-2 space-y-8">
+
+                    <!-- Edit Form -->
+                    <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm reveal delay-200">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-heading font-bold text-lg text-darkBlue">Personal Information</h3>
+                            <button class="text-xs font-bold text-primary hover:underline">Edit</button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">First Name</label>
+                                <input type="text" class="profile-input" value="Satakshi">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Last Name</label>
+                                <input type="text" class="profile-input" value="Singh">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Email
+                                    Address</label>
+                                <input type="email" class="profile-input" value="satakshi@immihire.com">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Phone</label>
+                                <input type="tel" class="profile-input" value="+971 50 123 4567">
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Bio / Notes</label>
+                            <textarea rows="3"
+                                class="profile-input">Experienced immigration consultant with a focus on Canadian and Australian pathways.</textarea>
+                        </div>
+                    </div>
+
+                    <!-- 3. Productivity Heatmap (The Twist) -->
+                    <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm reveal delay-300">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="font-heading font-bold text-lg text-darkBlue">Activity Log</h3>
+                                <p class="text-xs text-gray-400">1,240 contributions in the last year</p>
+                            </div>
+                            <div class="flex items-center gap-2 text-[0.6rem] text-gray-400 uppercase font-bold">
+                                <span>Less</span>
+                                <div class="w-3 h-3 bg-slate-200 rounded-[1px]"></div>
+                                <div class="w-3 h-3 bg-green-200 rounded-[1px]"></div>
+                                <div class="w-3 h-3 bg-green-400 rounded-[1px]"></div>
+                                <div class="w-3 h-3 bg-green-600 rounded-[1px]"></div>
+                                <span>More</span>
+                            </div>
+                        </div>
+
+                        <!-- The Grid (Generated via JS below for randomness) -->
+                        <div class="heatmap-grid" id="activity-grid"></div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        // 1. Lenticular Badge Logic
+        const badge = document.getElementById('badge-card');
+        const container = document.querySelector('.badge-container');
+
+        container.addEventListener('mousemove', (e) => {
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            // Calculate rotation (Max 15 degrees)
+            const rotateX = ((y - centerY) / centerY) * -15;
+            const rotateY = ((x - centerX) / centerX) * 15;
+
+            badge.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+            // Move background opposite to rotation for depth
+            const bgX = ((x - centerX) / centerX) * 20;
+            const bgY = ((y - centerY) / centerY) * 20;
+            badge.style.backgroundPosition = `${bgX}px ${bgY}px`;
+        });
+
+        container.addEventListener('mouseleave', () => {
+            badge.style.transform = `rotateX(0deg) rotateY(0deg)`;
+        });
+
+        // 2. Heatmap Generation
+        const grid = document.getElementById('activity-grid');
+        // 52 weeks * 7 days approx = 364 squares
+        const totalDays = 364;
+
+        for (let i = 0; i < totalDays; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'heat-cell';
+
+            // Randomly assign intensity
+            const rand = Math.random();
+            if (rand > 0.85) cell.classList.add('heat-l4'); // High
+            else if (rand > 0.7) cell.classList.add('heat-l3'); // Medium
+            else if (rand > 0.5) cell.classList.add('heat-l2'); // Low
+            else if (rand > 0.3) cell.classList.add('heat-l1'); // Very Low
+            // else empty
+
+            grid.appendChild(cell);
+        }
+
+        // 3. Reveal Animation
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) reveals[i].classList.add("active");
+            }
+        }
+        window.addEventListener("scroll", reveal); reveal();
+    </script>
+</body>
+
+</html>

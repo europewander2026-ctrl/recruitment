@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal | ImmiHire</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        heading: ['"Montserrat"', 'sans-serif'],
+                        mono: ['"Space Mono"', 'monospace'],
+                    },
+                    colors: {
+                        primary: '#0d5fb7',
+                        darkBlue: '#002366',
+                        accent: '#090927',
+                        lightGray: '#f0f0f0',
+                        success: '#10b981',
+                    },
+                    animation: {
+                        'spin-slow': 'spin 15s linear infinite',
+                        'scan': 'scan 2s ease-in-out infinite',
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        scan: {
+                            '0%, 100%': { transform: 'scaleX(0)', opacity: 0 },
+                            '50%': { transform: 'scaleX(1)', opacity: 1 },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base Styles */
+        body {
+            background-color: #000814;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 1. Neuro-Link Canvas */
+        #network-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* 2. Login Card Container */
+        .login-card {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 420px;
+            background: rgba(16, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-card:hover {
+            box-shadow: 0 30px 60px -12px rgba(13, 95, 183, 0.2);
+            border-color: rgba(13, 95, 183, 0.3);
+        }
+
+        /* Holographic Shield Ring */
+        .holo-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 600px;
+            height: 600px;
+            transform: translate(-50%, -50%);
+            border: 1px dashed rgba(13, 95, 183, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: spin-slow 20s linear infinite;
+            z-index: -1;
+        }
+
+        .holo-ring::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: #0d5fb7;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #0d5fb7;
+        }
+
+        /* Inputs */
+        .admin-input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem 1rem 1rem 3rem;
+            color: white;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .admin-input:focus {
+            outline: none;
+            background: rgba(13, 95, 183, 0.1);
+            border-color: #0d5fb7;
+            box-shadow: 0 0 15px rgba(13, 95, 183, 0.2);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            transition: color 0.3s;
+        }
+
+        .admin-input:focus+.input-icon {
+            color: #0d5fb7;
+        }
+
+        /* Biometric Button */
+        .scan-btn {
+            position: relative;
+            width: 100%;
+            padding: 1rem;
+            background: #0d5fb7;
+            color: white;
+            font-weight: 700;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .scan-btn:hover {
+            background: #004494;
+            box-shadow: 0 0 20px rgba(13, 95, 183, 0.4);
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: translateX(-100%);
+            transition: none;
+        }
+
+        .scan-btn.scanning .scan-line {
+            animation: scan-move 1.5s ease-in-out infinite;
+        }
+
+        @keyframes scan-move {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .scan-btn.success {
+            background: #10b981;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Access Granted Overlay */
+        #access-overlay {
+            position: fixed;
+            inset: 0;
+            background: #0d5fb7;
+            z-index: 100;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.5s cubic-bezier(0.86, 0, 0.07, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #access-overlay.active {
+            transform: scaleY(1);
+        }
+
+        .access-text {
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s 0.3s;
+        }
+
+        #access-overlay.active .access-text {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 1. Interactive Background -->
+    <canvas id="network-canvas"></canvas>
+
+    <!-- 2. The Login Interface -->
+    <div class="login-card">
+        <!-- Holographic Decor -->
+        <div class="holo-ring"></div>
+
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <div class="inline-block p-3 rounded-full bg-white/5 border border-white/10 mb-4 shadow-glow">
+                <img src="https://demo.hmhlabz.com/immihire/wp-content/uploads/immihire-logo.webp" alt="Logo"
+                    class="w-12 h-12 object-contain">
+            </div>
+            <h1 class="font-heading font-bold text-2xl text-white tracking-tight">Admin Portal</h1>
+            <p class="text-gray-400 text-xs font-mono mt-2 uppercase tracking-widest">Restricted Access // Level 5</p>
+        </div>
+
+        <!-- Form -->
+        <form id="login-form" onsubmit="event.preventDefault(); startAuth();">
+
+            <div class="admin-input-group">
+                <input type="email" class="admin-input" placeholder="Admin ID" required>
+                <i class="fa-solid fa-user-shield input-icon"></i>
+            </div>
+
+            <div class="admin-input-group">
+                <input type="password" class="admin-input" placeholder="Passcode" required>
+                <i class="fa-solid fa-key input-icon"></i>
+            </div>
+
+            <div class="flex justify-between items-center mb-8 text-xs text-gray-400">
+                <label class="flex items-center gap-2 cursor-pointer hover:text-white transition-colors">
+                    <input type="checkbox" class="accent-primary rounded"> Remember Device
+                </label>
+                <a href="#" class="hover:text-primary transition-colors">Lost Credentials?</a>
+            </div>
+
+            <button type="submit" id="auth-btn" class="scan-btn">
+                <span id="btn-text">Authenticate</span>
+                <i class="fa-solid fa-fingerprint text-lg"></i>
+                <div class="scan-line"></div>
+            </button>
+
+        </form>
+
+        <!-- Footer -->
+        <div class="text-center mt-8 border-t border-white/5 pt-4">
+            <p class="text-[0.6rem] text-gray-500 font-mono">
+                SYSTEM ID: IMMI-CORE-V2.4 <br>
+                SECURE CONNECTION ESTABLISHED
+            </p>
+        </div>
+    </div>
+
+    <!-- 3. Success Transition Overlay -->
+    <div id="access-overlay">
+        <h1 class="access-text">ACCESS GRANTED</h1>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // 1. Interactive Network Background
+        const canvas = document.getElementById('network-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let particles = [];
+        const mouse = { x: null, y: null };
+
+        // Resize
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Mouse Listeners
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        // Particle Class
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Bounce off edges
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                // Mouse Interaction
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 150) {
+                    this.x -= dx * 0.02; // Move away slightly
+                    this.y -= dy * 0.02;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = 'rgba(13, 95, 183, 0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Init Particles
+        function initParticles() {
+            particles = [];
+            let count = (width * height) / 15000; // Responsive density
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles();
+
+        // Connect Lines
+        function connect() {
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a; b < particles.length; b++) {
+                    let dx = particles[a].x - particles[b].x;
+                    let dy = particles[a].y - particles[b].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 120) {
+                        ctx.strokeStyle = `rgba(13, 95, 183, ${1 - distance / 120})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            connect();
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+
+        // 2. Login Authentication Logic
+        function startAuth() {
+            const btn = document.getElementById('auth-btn');
+            const btnText = document.getElementById('btn-text');
+            const icon = btn.querySelector('i');
+
+            // Start Scanning
+            btn.classList.add('scanning');
+            btnText.innerText = "Verifying Biometrics...";
+            icon.className = "fa-solid fa-circle-notch fa-spin text-lg"; // Spinner
+
+            // Simulate API Delay
+            setTimeout(() => {
+                // Success State
+                btn.classList.remove('scanning');
+                btn.classList.add('success');
+                btnText.innerText = "Identity Confirmed";
+                icon.className = "fa-solid fa-check text-lg";
+
+                // Trigger Transition
+                setTimeout(() => {
+                    document.getElementById('access-overlay').classList.add('active');
+
+                    // Redirect (Simulated)
+                    setTimeout(() => {
+                        // In a real app, window.location.href = 'dashboard.html';
+                        alert("Redirecting to Dashboard...");
+                    }, 1000);
+                }, 800);
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>

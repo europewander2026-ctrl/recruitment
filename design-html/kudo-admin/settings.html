@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings | ImmiHire Admin</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        heading: ['"Montserrat"', 'sans-serif'],
+                        mono: ['"Space Mono"', 'monospace'],
+                    },
+                    colors: {
+                        primary: '#0d5fb7',
+                        darkBlue: '#002366',
+                        lightBg: '#f8fafc',
+                        accent: '#090927',
+                        successGreen: '#10b981',
+                        accentBlue: '#3b82f6',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'card': '0 10px 30px -5px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 15px rgba(13, 95, 183, 0.2)',
+                    },
+                    animation: {
+                        'shred': 'shred 1s ease-in-out forwards',
+                    },
+                    keyframes: {
+                        shred: {
+                            '0%': { transform: 'translateY(0) scale(1)', opacity: 1 },
+                            '100%': { transform: 'translateY(50px) scaleY(0)', opacity: 0 },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base Styles */
+        body {
+            background-color: #f1f5f9;
+            color: #334155;
+            overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* 1. Sidebar Styles (Consistent) */
+        .sidebar {
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
+            z-index: 30;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            color: #64748b;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+            font-weight: 500;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #f0f9ff;
+            color: #0d5fb7;
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #0d5fb7;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* 2. Glass Cards */
+        .glass-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 3. Holographic ID Card (The Twist) */
+        .id-card-wrapper {
+            perspective: 1000px;
+        }
+
+        .id-card {
+            width: 350px;
+            height: 220px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #002366 0%, #0d5fb7 100%);
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+            box-shadow: 0 20px 40px rgba(13, 95, 183, 0.3);
+            overflow: hidden;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .id-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(125deg, transparent 0%, rgba(255, 255, 255, 0.0) 30%, rgba(255, 255, 255, 0.2) 40%, rgba(255, 255, 255, 0.0) 50%, transparent 100%);
+            mix-blend-mode: overlay;
+            pointer-events: none;
+        }
+
+        .chip {
+            width: 40px;
+            height: 30px;
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            border-radius: 4px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .chip::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 9px, rgba(0, 0, 0, 0.2) 10px);
+            border-radius: 4px;
+        }
+
+        /* 4. Reactor Toggles */
+        .reactor-toggle {
+            appearance: none;
+            width: 50px;
+            height: 28px;
+            background: #cbd5e1;
+            border-radius: 50px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .reactor-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .reactor-toggle:checked {
+            background: #10b981;
+        }
+
+        .reactor-toggle:checked::after {
+            transform: translateX(22px);
+            box-shadow: 0 0 15px #10b981;
+        }
+
+        /* 5. Shredder Animation */
+        .file-icon {
+            font-size: 3rem;
+            color: #ef4444;
+            transition: transform 0.3s;
+        }
+
+        .shredding .file-icon {
+            animation: shred 0.8s ease-in forwards;
+        }
+
+        .settings-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #334155;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .settings-input:focus {
+            outline: none;
+            border-color: #0d5fb7;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(13, 95, 183, 0.1);
+        }
+    </style>
+</head>
+
+<body class="flex h-screen bg-slate-50">
+
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 hidden lg:flex flex-col z-20">
+        <div class="p-6 flex items-center gap-3 border-b border-gray-100">
+            <img src="https://demo.hmhlabz.com/immihire/wp-content/uploads/immihire-logo.webp" alt="ImmiHire Logo"
+                class="w-8 h-8 object-contain">
+            <h1 class="font-heading font-bold text-xl text-darkBlue tracking-tight">Immi<span
+                    class="text-primary">Hire</span></h1>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-1">
+            <p class="text-xs font-bold text-gray-400 uppercase px-4 mb-3 tracking-wider">Main Menu</p>
+            <a href="dashboard.html" class="nav-link">
+                <i class="fa-solid fa-grid-2 text-lg"></i> Dashboard
+            </a>
+            <a href="applications.html" class="nav-link">
+                <i class="fa-solid fa-users text-lg"></i> Applications
+                <span class="ml-auto bg-blue-100 text-primary text-xs font-bold px-2 py-0.5 rounded-full">12</span>
+            </a>
+            <a href="recruitment.html" class="nav-link">
+                <i class="fa-solid fa-briefcase text-lg"></i> Recruitment
+            </a>
+
+            <p class="text-xs font-bold text-gray-400 uppercase px-4 mt-8 mb-3 tracking-wider">Content</p>
+            <a href="insights.html" class="nav-link">
+                <i class="fa-solid fa-newspaper text-lg"></i> Insights / Blog
+            </a>
+            <a href="website-cms.html" class="nav-link">
+                <i class="fa-solid fa-globe text-lg"></i> Website CMS
+            </a>
+
+            <p class="text-xs font-bold text-gray-400 uppercase px-4 mt-8 mb-3 tracking-wider">System</p>
+            <a href="settings.html" class="nav-link active">
+                <i class="fa-solid fa-gear text-lg"></i> Settings
+            </a>
+            <a href="login.html" class="nav-link text-red-500 hover:text-red-600 hover:bg-red-50">
+                <i class="fa-solid fa-power-off text-lg"></i> Logout
+            </a>
+        </nav>
+
+        <!-- User Mini Profile -->
+        <div class="p-4 border-t border-gray-100 bg-gray-50/50">
+            <a href="profile.html"
+                class="flex items-center gap-3 p-2 rounded-xl cursor-pointer hover:bg-white transition shadow-sm border border-transparent hover:border-gray-200">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=100&auto=format&fit=crop"
+                    class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm">
+                <div>
+                    <p class="text-sm font-bold text-gray-800">Satakshi Singh</p>
+                    <p class="text-xs text-gray-500">Super Admin</p>
+                </div>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden relative">
+
+        <!-- Top Bar -->
+        <header
+            class="h-20 bg-white/80 backdrop-blur-md border-b border-gray-200 flex items-center justify-between px-8 z-10 sticky top-0">
+            <h2 class="font-heading font-bold text-2xl text-darkBlue">System Configuration</h2>
+
+            <div class="flex items-center gap-4">
+                <button
+                    class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 font-bold hover:bg-gray-50 transition shadow-sm">
+                    <i class="fa-solid fa-book-open mr-2"></i> Documentation
+                </button>
+                <button
+                    class="bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-lg shadow-blue-500/20 transition-all">
+                    Save Changes
+                </button>
+            </div>
+        </header>
+
+        <!-- Scrollable Settings -->
+        <div class="flex-1 overflow-y-auto p-8 scroll-smooth bg-slate-50">
+            <div class="max-w-5xl mx-auto space-y-8">
+
+                <!-- 1. Profile & Identity (The Twist) -->
+                <div class="glass-card">
+                    <div class="flex flex-col lg:flex-row gap-12 items-start">
+
+                        <!-- Profile Form -->
+                        <div class="flex-1 w-full">
+                            <h3 class="font-heading font-bold text-xl text-darkBlue mb-1">Admin Identity</h3>
+                            <p class="text-gray-500 text-sm mb-6">Update your system credentials and public profile.</p>
+
+                            <div class="grid grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">First
+                                        Name</label>
+                                    <input type="text" class="settings-input" id="input-name" value="Satakshi"
+                                        oninput="updateIDCard()">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Last
+                                        Name</label>
+                                    <input type="text" class="settings-input" id="input-surname" value="Singh"
+                                        oninput="updateIDCard()">
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Role /
+                                    Clearance</label>
+                                <input type="text" class="settings-input" id="input-role" value="Super Admin"
+                                    oninput="updateIDCard()">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Admin ID</label>
+                                <input type="text" class="settings-input bg-gray-100 text-gray-400 cursor-not-allowed"
+                                    value="IMH-001-ADMIN" disabled>
+                            </div>
+                        </div>
+
+                        <!-- Live Holographic ID Card -->
+                        <div class="id-card-wrapper">
+                            <div class="id-card" id="tilt-card">
+                                <div class="flex justify-between items-start">
+                                    <div class="chip"></div>
+                                    <img src="https://demo.hmhlabz.com/immihire/wp-content/uploads/immihire-logo.webp"
+                                        class="w-8 h-8 opacity-80 brightness-0 invert">
+                                </div>
+
+                                <div class="flex gap-4 items-center">
+                                    <div
+                                        class="w-16 h-16 rounded-lg bg-white/20 border border-white/30 overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=100&auto=format&fit=crop"
+                                            class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <p class="text-[0.6rem] uppercase opacity-70 tracking-widest">Name</p>
+                                        <h4 class="font-mono font-bold text-lg leading-tight" id="card-name">SATAKSHI
+                                            SINGH</h4>
+                                        <p class="text-[0.6rem] uppercase opacity-70 tracking-widest mt-2">Clearance</p>
+                                        <p class="font-mono text-sm font-bold text-green-300" id="card-role">SUPER ADMIN
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="text-[0.5rem] font-mono opacity-60 tracking-widest flex justify-between items-end">
+                                    <span>AUTH: 9822-1102-44</span>
+                                    <span>VALID THRU: 12/28</span>
+                                </div>
+                            </div>
+                            <p class="text-center text-xs text-gray-400 mt-4"><i class="fa-solid fa-eye mr-1"></i> Live
+                                Preview</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 2. System Controls (Reactor Toggles) -->
+                <div class="glass-card">
+                    <h3 class="font-heading font-bold text-xl text-darkBlue mb-6">System Preferences</h3>
+
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-blue-100 text-primary flex items-center justify-center">
+                                    <i class="fa-solid fa-bell"></i></div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-gray-800">System Notifications</h4>
+                                    <p class="text-xs text-gray-500">Receive alerts for new applications.</p>
+                                </div>
+                            </div>
+                            <input type="checkbox" class="reactor-toggle" checked>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-shield-halved"></i></div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-gray-800">2FA Security</h4>
+                                    <p class="text-xs text-gray-500">Require OTP for login.</p>
+                                </div>
+                            </div>
+                            <input type="checkbox" class="reactor-toggle">
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-bolt"></i></div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-gray-800">High Performance Mode</h4>
+                                    <p class="text-xs text-gray-500">Disable animations for speed.</p>
+                                </div>
+                            </div>
+                            <input type="checkbox" class="reactor-toggle">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Data Management (Shredder Twist) -->
+                <div class="glass-card border-l-4 border-l-red-500">
+                    <h3 class="font-heading font-bold text-xl text-red-600 mb-1">Danger Zone</h3>
+                    <p class="text-gray-500 text-sm mb-8">Irreversible actions regarding system data.</p>
+
+                    <div class="flex items-center justify-between">
+                        <div class="max-w-md">
+                            <h4 class="font-bold text-sm text-gray-800">Purge Temporary Cache</h4>
+                            <p class="text-xs text-gray-500 mt-1">Clears all temporary session data and cached
+                                application forms. Safe to perform monthly.</p>
+                        </div>
+
+                        <!-- Shredder Animation Area -->
+                        <div class="relative w-24 h-24 flex items-center justify-center" id="shredder-area">
+                            <i class="fa-solid fa-file-lines file-icon"></i>
+                        </div>
+
+                        <button onclick="shredData()"
+                            class="px-6 py-2 border border-red-200 text-red-600 font-bold rounded-lg hover:bg-red-50 text-sm transition-colors">
+                            Clear Cache
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        // 1. Holographic ID Card Tilt & Update
+        const card = document.getElementById('tilt-card');
+
+        document.addEventListener('mousemove', (e) => {
+            if (!card) return;
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            // Subtle rotation
+            const rotateX = ((e.clientY - centerY) / centerY) * -10;
+            const rotateY = ((e.clientX - centerX) / centerX) * 10;
+
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        // Reset on mouse leave
+        document.addEventListener('mouseleave', () => {
+            if (card) card.style.transform = `perspective(1000px) rotateX(0) rotateY(0)`;
+        });
+
+        // Live Text Update
+        function updateIDCard() {
+            const name = document.getElementById('input-name').value;
+            const surname = document.getElementById('input-surname').value;
+            const role = document.getElementById('input-role').value;
+
+            document.getElementById('card-name').innerText = (name + ' ' + surname).toUpperCase();
+            document.getElementById('card-role').innerText = role.toUpperCase();
+        }
+
+        // 2. Shredder Animation
+        function shredData() {
+            const area = document.getElementById('shredder-area');
+            const icon = area.querySelector('.file-icon');
+
+            if (area.classList.contains('shredding')) return;
+
+            area.classList.add('shredding');
+
+            // Simulate process
+            setTimeout(() => {
+                alert("Cache Purged Successfully.");
+                area.classList.remove('shredding');
+                // Reset icon animation
+                // Ideally remove and re-add element to reset keyframe if needed repeatedly
+                icon.style.animation = 'none';
+                icon.offsetHeight; /* trigger reflow */
+                icon.style.animation = null;
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>
