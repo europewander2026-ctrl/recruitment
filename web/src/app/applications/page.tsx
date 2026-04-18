@@ -83,6 +83,15 @@ export default function ApplicationsPage() {
   const [applicants, setApplicants] = useState<Applicant[]>(mockApplicants);
   const [filter, setFilter] = useState('All Applications');
 
+  // Notification State
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [notifications, setNotifications] = useState([
+      { id: '1', message: 'System Update: Core Routing Online', isRead: false, createdAt: 'Just now' },
+      { id: '2', message: 'New High-Score Application Received', isRead: false, createdAt: '10m ago' }
+  ]);
+  const markAsRead = async (id: string) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
   useEffect(() => {
     // In a real scenario, we'll fetch from our API
     // fetch(`/api/applications?status=${filter}`).then(res => res.json()).then(data => setApplicants(data.data));

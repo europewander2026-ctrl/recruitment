@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-interface ResetPasswordProps = {
+interface ResetPasswordProps {
   token: string;
   onSuccess: () => void;
   onError: (message: string) => void;

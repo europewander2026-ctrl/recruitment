@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:static": "mv src/app/api src/app/_api_hidden && IS_STATIC_EXPORT=true next build; mv src/app/_api_hidden src/app/api",
     "start": "next start",
     "lint": "eslint"
   },
