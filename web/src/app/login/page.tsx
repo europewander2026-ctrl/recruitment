@@ -139,7 +139,7 @@ export default function LoginPage() {
       // Success
       setBtnText("Identity Confirmed");
       setTimeout(() => setAccessGranted(true), 800);
-      setTimeout(() => router.push('/dashboard'), 2000);
+      setTimeout(() => router.push('/applications'), 2000);
       
     } catch (err: any) {
       setError(err.message);
