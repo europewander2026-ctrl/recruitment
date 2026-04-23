@@ -41,6 +41,7 @@ model Application {
   status    String   @default("pending")
   skills    Json?    // Array of skills [Comm, Tech, Lead, Exp, Edu]
   timeline  Json?    // Array of timeline objects
+  documents Document[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -63,4 +64,19 @@ model Notification {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+model Document {
+  id            String      @id @default(uuid())
+  candidateId   String
+  application   Application @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  documentType  String
+  uniqueCode    String      @unique
+  pdfUrl        String
+  isPaid        Boolean     @default(false)
+  paymentStatus   String      @default("pending")
+  paymentProvider String?
+  transactionId   String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }

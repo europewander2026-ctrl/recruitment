@@ -29,10 +29,43 @@ export async function POST(req: Request) {
         },
       });
 
-      // Instead of throwing errors if Brevo isn't setup, we will log for now.
-      console.log(`[STUB] Sending Brevo Email to ${email}`);
-      console.log(`[STUB] Recovery Link: http://localhost:3000/reset-password?token=${resetToken}`);
-      // In production: await sendBrevoEmail(email, resetToken);
+      const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+      
+      try {
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'api-key': process.env.BREVO_API_KEY || '',
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            sender: { name: "ImmiHire Auth", email: "europe.wander2026@gmail.com" },
+            to: [{ email: user.email }],
+            subject: "ImmiHire - Password Reset Request",
+            htmlContent: `
+              <html>
+                <body style="font-family: sans-serif; padding: 20px;">
+                  <h2>Password Reset</h2>
+                  <p>You requested a password reset for your ImmiHire account.</p>
+                  <p>Please click the link below to securely reset your password. This link expires in 15 minutes.</p>
+                  <a href="${resetLink}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Reset Password</a>
+                  <p style="margin-top: 20px; font-size: 12px; color: #666;">If you did not request this, please ignore this email.</p>
+                </body>
+              </html>
+            `
+          })
+        });
+
+        if (!response.ok) {
+          console.error('Brevo API Error:', await response.text());
+        } else {
+          console.log(`Successfully sent recovery email to ${email}`);
+        }
+      } catch (brevoErr) {
+        console.error('Brevo API Request Failed:', brevoErr);
+        // We log the error but still return success below to prevent email enumeration
+      }
     }
 
     // Always return success to prevent email enumeration

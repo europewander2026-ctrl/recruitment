@@ -65,3 +65,20 @@
 - [x] **Task 4.4: Notification System**
   - [x] Create Vercel API route `/api/notifications` (GET, Mark-as-read).
   - [x] Build top bar bell icon dropdown with unread state logic.
+
+
+  ## Epic 5: Document Verification & Secure Delivery (Nomadpay & Payoneer)
+- [ ] **Task 5.1: Database Schema Update (Neon)**
+  - [ ] Create `documents` table (id, candidate_id, document_type, unique_code, pdf_url, is_paid, payment_status, payment_provider, transaction_id).
+- [ ] **Task 5.2: Public Verification Portal**
+  - [ ] Build a public-facing UI page (`/verify`) with a search input for the unique code.
+  - [ ] Create Vercel API route `/api/verify-code` to validate the code against the database.
+  - [ ] Build the success state UI: Display candidate info, document status, and two distinct CTAs: "Pay with Nomadpay" and "Pay with Payoneer".
+- [ ] **Task 5.3: Dual Payment Gateway & Webhook Architecture**
+  - [ ] Create Vercel API routes for checkout generation: `/api/checkout/nomadpay` and `/api/checkout/payoneer`.
+  - [ ] Create dedicated Vercel API routes for webhooks: `/api/webhooks/nomadpay` and `/api/webhooks/payoneer`.
+  - [ ] Add logic to both webhook listeners to automatically update `is_paid = true`, record the `payment_provider`, and store the `transaction_id` upon a successful event.
+- [ ] **Task 5.4: Secure PDF Access & Dynamic Generation**
+  - [ ] Build the final success UI returning the user from either checkout flow.
+  - [ ] Create a secure Vercel API route `/api/download-document` that verifies the `is_paid` status.
+  - [ ] Integrate `@react-pdf/renderer` or `pdf-lib` to dynamically generate the letter (injecting name, role, date, and unique code) and serve the buffer to the client.
