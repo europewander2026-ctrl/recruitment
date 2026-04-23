@@ -25,7 +25,7 @@ export default function RecruitmentPage() {
     // 1. Fetch DB
     const fetchJobs = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/jobs`);
             const data = await res.json();
             if (data.success) {
                 // Group by country natively

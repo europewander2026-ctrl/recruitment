@@ -30,7 +30,7 @@ export default function SettingsPage() {
   ]);
 
   useEffect(() => {
-     // Pre-load logic or fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}`) goes here.
+     // Pre-load logic or fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/notifications`) goes here.
   }, []);
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
@@ -39,7 +39,7 @@ export default function SettingsPage() {
       
       try {
           // Send PUT to our Next API
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}`, {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/settings/profile`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ email: email || undefined, password: password || undefined })
@@ -60,7 +60,7 @@ export default function SettingsPage() {
 
   const markAsRead = async (id: string) => {
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
-      // fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}`, { method: 'PUT', body: JSON.stringify({ id }) });
+      // fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/notifications`, { method: 'PUT', body: JSON.stringify({ id }) });
   };
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -83,7 +83,7 @@ export default function SettingsPage() {
               <p className="text-xs font-bold text-slate-400 uppercase px-4 mt-8 mb-3 tracking-wider">System</p>
               <Link href="/settings" className="nav-link text-primary bg-blue-50 font-medium flex items-center gap-3 p-3 rounded-xl border-l-4 border-primary"><i className="fa-solid fa-gear"></i> Settings</Link>
               <button 
-                onClick={async () => { await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}`, {method: 'POST'}); window.location.href = '/login'; }}
+                onClick={async () => { await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/auth/logout`, {method: 'POST'}); window.location.href = '/login'; }}
                 className="w-full text-left nav-link text-red-500 hover:text-red-600 hover:bg-red-50 flex items-center gap-3 p-3 rounded-xl transition-colors mt-2"
               >
                   <i className="fa-solid fa-power-off"></i> Logout

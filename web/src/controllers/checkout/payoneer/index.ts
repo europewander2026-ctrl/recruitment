@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     
     // Simulation:
     setTimeout(async () => {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || origin}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || origin}/api/webhooks/payoneer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -123,7 +123,7 @@ export default function ForgotPasswordPage() {
     setBtnText("Transmitting Protocol...");
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
