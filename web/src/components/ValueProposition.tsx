@@ -16,7 +16,7 @@ const ValueProposition: React.FC<ValuePropositionProps> = ({ features }) => {
       <div className="max-w-7xl mx-auto px-8">
         <div className="text-center mb-16">
           <h2 className="font-heading text-3xl md:text-4xl font-bold text-darkBlue mb-4">
-            Why Choose ImmiHire?
+            Why Choose Eurovanta Talent?
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Streamline your recruitment process with our advanced, AI-driven platform designed for modern talent acquisition.

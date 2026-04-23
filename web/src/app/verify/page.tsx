@@ -69,7 +69,7 @@ export default function VerifyPage() {
 
       <div className="w-full max-w-md z-10 relative">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold font-jakarta text-white mb-2">ImmiHire</h1>
+          <h1 className="text-3xl font-bold font-jakarta text-white mb-2">Eurovanta Talent</h1>
           <p className="text-slate-400 font-sans">Secure Document Verification</p>
         </div>
 
@@ -196,7 +196,7 @@ export default function VerifyPage() {
         </div>
         
         <div className="mt-8 text-center text-sm text-slate-500">
-          <p>&copy; {new Date().getFullYear()} ImmiHire. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Eurovanta Talent. All rights reserved.</p>
         </div>
       </div>
     </div>

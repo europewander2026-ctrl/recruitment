@@ -99,12 +99,12 @@ export default function ApplicationsPage() {
 
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-700 overflow-hidden">
-      <Head><title>Application Center | ImmiHire Admin</title></Head>
+      <Head><title>Application Center | Eurovanta Talent Admin</title></Head>
 
       {/* Sidebar */}
       <aside className="sidebar w-64 hidden lg:flex flex-col z-20 bg-white border-r border-slate-200 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
         <div className="p-6 flex items-center gap-3 border-b border-slate-100">
-            <img src="https://demo.hmhlabz.com/immihire/wp-content/uploads/immihire-logo.webp" alt="ImmiHire Logo" className="w-8 h-8 object-contain" />
+            <img src="https://demo.hmhlabz.com/immihire/wp-content/uploads/immihire-logo.webp" alt="Eurovanta Talent Logo" className="w-8 h-8 object-contain" />
             <h1 className="font-heading font-bold text-xl text-darkBlue tracking-tight">Immi<span className="text-primary">Hire</span></h1>
         </div>
 

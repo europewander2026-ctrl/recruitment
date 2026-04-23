@@ -21,7 +21,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ImmiHire Admin Platform",
+  title: "Eurovanta Talent Admin Platform",
   description: "Comprehensive Recruitment Operations Dashboard",
 };
 

@@ -50,7 +50,7 @@ const LandingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header title="ImmiHire" />
+      <Header title="Eurovanta Talent" />
       
       <main className="flex-1">
         <Hero 
@@ -66,13 +66,13 @@ const LandingPage: React.FC = () => {
         
         <CTASection 
           title="Ready to transform your hiring?"
-          subtitle="Join hundreds of companies scaling their teams with ImmiHire's intelligent platform."
+          subtitle="Join hundreds of companies scaling their teams with Eurovanta Talent's intelligent platform."
           buttonText="Create Your Account"
           onButtonClick={handleCtaClick}
         />
       </main>
 
-      <Footer copyright="© 2026 ImmiHire. All rights reserved." />
+      <Footer copyright="© 2026 Eurovanta Talent. All rights reserved." />
     </div >
   );
 };

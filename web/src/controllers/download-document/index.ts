@@ -37,7 +37,7 @@ export async function GET(req: Request) {
     const { width, height } = page.getSize();
     
     // Header / Typography Logo
-    page.drawText('ImmiHire', {
+    page.drawText('Eurovanta Talent', {
       x: 50,
       y: height - 60,
       size: 28,
@@ -75,7 +75,7 @@ Dear ${document.application.name},
 This letter serves as official verification that you have been successfully evaluated 
 and selected for the role of ${document.application.role}.
 
-This document has been securely verified and issued through the ImmiHire platform.
+This document has been securely verified and issued through the Eurovanta Talent platform.
 Your payment and document processing are complete.
 
 Status: VERIFIED & ACTIVE
@@ -85,7 +85,7 @@ Transaction ID: ${document.transactionId || 'N/A'}
 We wish you the best in your new position.
 
 Sincerely,
-ImmiHire Operations Team
+Eurovanta Talent Operations Team
     `.trim();
 
     page.drawText(contentText, {

@@ -40,14 +40,14 @@ export async function POST(req: Request) {
             'content-type': 'application/json'
           },
           body: JSON.stringify({
-            sender: { name: "ImmiHire Auth", email: "europe.wander2026@gmail.com" },
+            sender: { name: "Eurovanta Talent Auth", email: "europe.wander2026@gmail.com" },
             to: [{ email: user.email }],
-            subject: "ImmiHire - Password Reset Request",
+            subject: "Eurovanta Talent - Password Reset Request",
             htmlContent: `
               <html>
                 <body style="font-family: sans-serif; padding: 20px;">
                   <h2>Password Reset</h2>
-                  <p>You requested a password reset for your ImmiHire account.</p>
+                  <p>You requested a password reset for your Eurovanta Talent account.</p>
                   <p>Please click the link below to securely reset your password. This link expires in 15 minutes.</p>
                   <a href="${resetLink}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Reset Password</a>
                   <p style="margin-top: 20px; font-size: 12px; color: #666;">If you did not request this, please ignore this email.</p>

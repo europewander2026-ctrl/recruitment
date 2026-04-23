@@ -4,7 +4,7 @@ interface FooterProps {
   copyright?: string;
 }
 
-const Footer: React.FC<FooterProps> = ({ copyright = "© 2026 ImmiHire. All rights reserved." }) => {
+const Footer: React.FC<FooterProps> = ({ copyright = "© 2026 Eurovanta Talent. All rights reserved." }) => {
   return (
     <footer className="bg-white border-t border-gray-200 py-8 px-8 mt-auto">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">

@@ -387,7 +387,7 @@ export default function RecruitmentPage() {
                   </div>
               </div>
               <div className="border-t border-slate-800 pt-8 text-sm text-slate-500">
-                  <p>&copy; 2026 ImmiHire Consultants.</p>
+                  <p>&copy; 2026 Eurovanta Talent Consultants.</p>
               </div>
           </div>
       </footer>

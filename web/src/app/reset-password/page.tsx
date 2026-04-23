@@ -157,7 +157,7 @@ export default function ResetPasswordPage() {
   return (
     <div className="bg-[#000814] h-screen flex items-center justify-center overflow-hidden relative font-sans text-white">
       <Head>
-        <title>Credential Recovery | ImmiHire</title>
+        <title>Credential Recovery | Eurovanta Talent</title>
       </Head>
 
       <canvas ref={canvasRef} className="absolute inset-0 z-0 w-full h-full"></canvas>

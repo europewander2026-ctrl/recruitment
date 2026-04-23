@@ -151,7 +151,7 @@ export default function LoginPage() {
   return (
     <div className="bg-[#000814] h-screen flex items-center justify-center overflow-hidden relative font-sans text-white">
       <Head>
-        <title>Admin Portal | ImmiHire</title>
+        <title>Admin Portal | Eurovanta Talent</title>
       </Head>
 
       {/* Network Background */}

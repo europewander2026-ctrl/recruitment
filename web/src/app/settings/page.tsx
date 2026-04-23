@@ -67,7 +67,7 @@ export default function SettingsPage() {
 
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-700 overflow-hidden">
-      <Head><title>System Configurations | ImmiHire Admin</title></Head>
+      <Head><title>System Configurations | Eurovanta Talent Admin</title></Head>
 
       {/* Sidebar */}
       <aside className="w-64 hidden lg:flex flex-col z-20 bg-white border-r border-slate-200">
