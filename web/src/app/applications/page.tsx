@@ -94,7 +94,7 @@ export default function ApplicationsPage() {
 
   useEffect(() => {
     // In a real scenario, we'll fetch from our API
-    // fetch(`/api/applications?status=${filter}`).then(res => res.json()).then(data => setApplicants(data.data));
+    // fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}`).then(res => res.json()).then(data => setApplicants(data.data));
   }, [filter]);
 
   return (

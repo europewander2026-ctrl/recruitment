@@ -30,7 +30,7 @@ const ResetPasswordForm: React.FC<ResetPasswordProps> = ({ token, onSuccess, onE
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/auth/reset-password', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, password }),

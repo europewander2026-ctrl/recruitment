@@ -19,7 +19,7 @@ function PaymentSuccessContent() {
       // Automatically trigger download
       setTimeout(() => {
         const link = document.createElement('a');
-        link.href = `/api/download-document?id=${documentId}`;
+        link.href = `${process.env.NEXT_PUBLIC_API_URL || ''}`;
         link.setAttribute('download', 'Verification_Letter.pdf');
         document.body.appendChild(link);
         link.click();

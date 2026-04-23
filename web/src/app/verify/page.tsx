@@ -16,7 +16,7 @@ export default function VerifyPage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/verify-code', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code })
@@ -41,7 +41,7 @@ export default function VerifyPage() {
     
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/checkout/${provider}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ documentId: documentInfo.id })

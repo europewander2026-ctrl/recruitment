@@ -43,8 +43,8 @@ export async function POST(req: Request) {
       name: 'admin_session',
       value: token,
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
       path: '/',
       maxAge: 60 * 60 * 8, // 8 hours
     });
