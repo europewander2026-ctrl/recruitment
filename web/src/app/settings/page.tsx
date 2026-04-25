@@ -1,4 +1,5 @@
 "use client"
+import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -72,8 +73,7 @@ export default function SettingsPage() {
       {/* Sidebar */}
       <aside className="w-64 hidden lg:flex flex-col z-20 bg-white border-r border-slate-200">
           <div className="p-6 flex items-center gap-3 border-b border-slate-100">
-              <img src="https://demo.hmhlabz.com/immihire/wp-content/uploads/immihire-logo.webp" alt="Logo" className="w-8 h-8 object-contain" />
-              <h1 className="font-heading font-bold text-xl text-darkBlue tracking-tight">Immi<span className="text-primary">Hire</span></h1>
+              <Image src="/logo.png" alt="Eurovanta Talent Logo" width={120} height={32} className="object-contain" />
           </div>
           <nav className="flex-1 px-4 py-6 space-y-1">
               <Link href="/dashboard" className="nav-link text-slate-500 hover:text-primary hover:bg-blue-50 flex items-center gap-3 p-3 rounded-xl transition-colors"><i className="fa-solid fa-grid-2"></i> Dashboard</Link>
@@ -175,7 +175,7 @@ export default function SettingsPage() {
                                             value={email}
                                             onChange={e=>setEmail(e.target.value)}
                                             className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:border-primary transition-colors" 
-                                            placeholder="admin@immihire.com"
+                                            placeholder="admin@example.com"
                                           />
                                           <i className="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                                       </div>

@@ -16,9 +16,11 @@ import * as webhooksPayoneer from '@/controllers/webhooks/payoneer';
 
 // Other
 import * as applications from '@/controllers/applications';
+import * as applicationsStatus from '@/controllers/applications/status';
 import * as downloadDocument from '@/controllers/download-document';
 import * as jobs from '@/controllers/jobs';
 import * as notifications from '@/controllers/notifications';
+import * as settingsGeneral from '@/controllers/settings/general';
 import * as settingsProfile from '@/controllers/settings/profile';
 import * as verifyCode from '@/controllers/verify-code';
 
@@ -32,9 +34,12 @@ const routes: Record<string, any> = {
   'webhooks/nomadpay': webhooksNomadpay,
   'webhooks/payoneer': webhooksPayoneer,
   'applications': applications,
+  'applications/status': applicationsStatus,
   'download-document': downloadDocument,
   'jobs': jobs,
   'notifications': notifications,
+  'notifications/read': notifications,
+  'settings/general': settingsGeneral,
   'settings/profile': settingsProfile,
   'verify-code': verifyCode,
 };

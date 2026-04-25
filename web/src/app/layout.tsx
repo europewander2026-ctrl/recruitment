@@ -21,8 +21,9 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Eurovanta Talent Admin Platform",
-  description: "Comprehensive Recruitment Operations Dashboard",
+  title: 'Eurovanta Talent | Global Recruitment & Verification',
+  description: 'Seamless Global Recruitment and Secure Document Verification.',
+  icons: { icon: '/favicon.png' },
 };
 
 export default function RootLayout({

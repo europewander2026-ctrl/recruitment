@@ -39,6 +39,8 @@ model Application {
   photo     String?
   score     Int      @default(0)
   status    String   @default("pending")
+  visaStatus String?
+  resumeUrl String?
   skills    Json?    // Array of skills [Comm, Tech, Lead, Exp, Edu]
   timeline  Json?    // Array of timeline objects
   documents Document[]
@@ -79,4 +81,13 @@ model Document {
   transactionId   String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+}
+
+model Settings {
+  id              String   @id @default("global")
+  receiveAlerts   Boolean  @default(true)
+  defaultCurrency String   @default("USD")
+  publicForms     Boolean  @default(true)
+  soundAlerts     Boolean  @default(true)
+  updatedAt       DateTime @updatedAt
 }

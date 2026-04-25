@@ -1,4 +1,5 @@
 "use client"
+import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -85,16 +86,55 @@ export default function ApplicationsPage() {
 
   // Notification State
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [notifications, setNotifications] = useState([
-      { id: '1', message: 'System Update: Core Routing Online', isRead: false, createdAt: 'Just now' },
-      { id: '2', message: 'New High-Score Application Received', isRead: false, createdAt: '10m ago' }
-  ]);
-  const markAsRead = async (id: string) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  const markAsRead = async (id: string) => {
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
+      try {
+          await fetch('/api/notifications/read', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id })
+          });
+      } catch (err) {
+          console.error(err);
+      }
+  };
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   useEffect(() => {
-    // In a real scenario, we'll fetch from our API
-    // fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/applications?status=${filter}`).then(res => res.json()).then(data => setApplicants(data.data));
+      fetch('/api/notifications')
+          .then(res => res.json())
+          .then(data => {
+              if (data.success && data.data) {
+                  setNotifications(data.data.map((n: any) => ({ 
+                      ...n, 
+                      createdAt: new Date(n.createdAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) 
+                  })));
+              }
+          })
+          .catch(err => console.error('Error fetching notifications', err));
+  }, []);
+
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const res = await fetch(`/api/applications?status=${filter}`);
+        const data = await res.json();
+        if (data.success && data.data && data.data.length > 0) {
+          // ensure skills and timeline are parsed if they are strings
+          const parsedData = data.data.map((app: any) => ({
+            ...app,
+            skills: typeof app.skills === 'string' ? JSON.parse(app.skills) : (app.skills || []),
+            timeline: typeof app.timeline === 'string' ? JSON.parse(app.timeline) : (app.timeline || [])
+          }));
+          setApplicants(parsedData);
+        }
+      } catch (err) {
+        console.error('Failed to fetch applications', err);
+      }
+    };
+    fetchApplications();
   }, [filter]);
 
   return (
@@ -104,8 +144,7 @@ export default function ApplicationsPage() {
       {/* Sidebar */}
       <aside className="sidebar w-64 hidden lg:flex flex-col z-20 bg-white border-r border-slate-200 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
         <div className="p-6 flex items-center gap-3 border-b border-slate-100">
-            <img src="https://demo.hmhlabz.com/immihire/wp-content/uploads/immihire-logo.webp" alt="Eurovanta Talent Logo" className="w-8 h-8 object-contain" />
-            <h1 className="font-heading font-bold text-xl text-darkBlue tracking-tight">Immi<span className="text-primary">Hire</span></h1>
+            <Image src="/logo.png" alt="Eurovanta Talent Logo" width={120} height={32} className="object-contain" />
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-1">

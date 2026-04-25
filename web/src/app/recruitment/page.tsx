@@ -1,4 +1,5 @@
 "use client"
+import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -94,11 +95,7 @@ const getCountryAccent = (c: string) => c === 'uae' ? 'border-l-primary' : 'bord
 const getCountryPill = (c: string) => c === 'uae' ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-green-50 text-green-600 border-green-100';
 
 export default function RecruitmentOpsPage() {
-  const [jobs, setJobs] = useState<Job[]>([
-      { id: "1", title: 'Factory Workers', country: 'portugal', salary: '€2,500', category: 'Blue Collar', description: 'General factory labor.', status: true },
-      { id: "2", title: 'Drivers (Type C)', country: 'portugal', salary: '€3,000', category: 'Skilled Trade', description: 'Requires valid Type C license.', status: true },
-      { id: "12", title: 'White Collar Prof.', country: 'uae', salary: 'AED 15,000', category: 'White Collar', description: 'Various office roles.', status: true },
-  ]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [jobFilter, setJobFilter] = useState('all');
   
   // Kanban State
@@ -109,18 +106,72 @@ export default function RecruitmentOpsPage() {
       { id: 'app-3', name: 'Sarah Jones', role: 'Nurse', country: 'uae', status: 'reviewing', exp: '6 Years', visa: 'None', file: 'sjones_dha.pdf', timeAgg: '3d ago' },
   ]);
 
+  useEffect(() => {
+    fetch('/api/applications')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) {
+          const mapped = data.data.map((app: any) => ({
+            id: app.id,
+            name: app.name,
+            role: app.role,
+            country: app.location ? app.location.split(',').pop()?.trim().toLowerCase() || 'uae' : 'uae',
+            status: app.status === 'pending' ? 'received' : app.status,
+            exp: app.exp || 'N/A',
+            visa: app.visaStatus || 'None',
+            file: app.resumeUrl || 'N/A',
+            timeAgg: 'Just now'
+          }));
+          setApps(mapped);
+        }
+      })
+      .catch(err => console.error('Error fetching applications', err));
+
+    // Fetch Jobs
+    fetch('/api/jobs')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) {
+          setJobs(data.data.map((j: any) => ({ ...j, status: j.status === 'active' })));
+        }
+      })
+      .catch(err => console.error('Error fetching jobs', err));
+  }, []);
+
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalForm, setModalForm] = useState<Partial<Job>>({ country: 'portugal', category: 'Blue Collar', status: true });
 
   // Notification State
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [notifications, setNotifications] = useState([
-      { id: '1', message: 'System Update: Core Routing Online', isRead: false, createdAt: 'Just now' },
-      { id: '2', message: 'New High-Score Application Received', isRead: false, createdAt: '10m ago' }
-  ]);
-  const markAsRead = async (id: string) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const markAsRead = async (id: string) => {
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
+      try {
+          await fetch('/api/notifications/read', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id })
+          });
+      } catch (err) {
+          console.error(err);
+      }
+  };
   const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  useEffect(() => {
+      fetch('/api/notifications')
+          .then(res => res.json())
+          .then(data => {
+              if (data.success && data.data) {
+                  setNotifications(data.data.map((n: any) => ({ 
+                      ...n, 
+                      createdAt: new Date(n.createdAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) 
+                  })));
+              }
+          })
+          .catch(err => console.error('Error fetching notifications', err));
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -131,7 +182,7 @@ export default function RecruitmentOpsPage() {
       setActiveId(event.active.id);
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = async (event: any) => {
       const { active, over } = event;
       if (!over) {
           setActiveId(null);
@@ -141,18 +192,23 @@ export default function RecruitmentOpsPage() {
       const activeId = active.id;
       const overId = over.id;
 
+      let newStatus: string | null = null;
+      const prevApps = [...apps];
+
       // Simplistic column drop mapping (treating the Sortable context container IDs as columns)
       if (['received', 'reviewing', 'shortlisted'].includes(overId)) {
+          newStatus = overId;
           setApps((prev) => prev.map(a => a.id === activeId ? { ...a, status: overId as ApplicationNode['status'] } : a));
       } else {
         // Rearranging inside same/other column over another item
         const activeItem = apps.find(a => a.id === activeId);
         const overItem = apps.find(a => a.id === overId);
         if(activeItem && overItem) {
+             newStatus = overItem.status;
              setApps((prev) => {
                 const oldIndex = prev.findIndex(item => item.id === activeId);
                 const newIndex = prev.findIndex(item => item.id === overId);
-                let newCollection = arrayMove(prev, oldIndex, newIndex);
+                const newCollection = arrayMove(prev, oldIndex, newIndex);
                 // Also update status if moved to new col based on the item we dropped over
                 return newCollection.map(a => a.id === activeId ? { ...a, status: overItem.status } : a);
              });
@@ -160,7 +216,21 @@ export default function RecruitmentOpsPage() {
       }
       
       setActiveId(null);
-      // In production: fetch PUT /api/applications with updated status here.
+      
+      if (newStatus) {
+         try {
+             const res = await fetch('/api/applications/status', {
+                 method: 'PUT',
+                 headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify({ id: activeId, status: newStatus })
+             });
+             const data = await res.json();
+             if (!data.success) throw new Error('API Error');
+         } catch (e) {
+             console.error('Failed to update status', e);
+             setApps(prevApps); // revert optimistic update
+         }
+      }
   };
 
   const filteredJobs = jobFilter === 'all' ? jobs : jobs.filter(j => j.country === jobFilter);
@@ -175,14 +245,42 @@ export default function RecruitmentOpsPage() {
       setIsModalOpen(true);
   };
 
-  const saveJob = () => {
-      // In production: fetch POST/PUT /api/jobs
-      if (modalForm.id) {
-          setJobs(jobs.map(j => j.id === modalForm.id ? modalForm as Job : j));
-      } else {
-          setJobs([...jobs, { ...modalForm, id: Math.random().toString() } as Job]);
+  const saveJob = async () => {
+      const isEdit = !!modalForm.id;
+      const method = isEdit ? 'PUT' : 'POST';
+      
+      try {
+          const res = await fetch('/api/jobs', {
+              method,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(modalForm)
+          });
+          const data = await res.json();
+          if (data.success) {
+              const savedJob = { ...data.data, status: data.data.status === 'active' };
+              if (isEdit) {
+                  setJobs(jobs.map(j => j.id === savedJob.id ? savedJob : j));
+              } else {
+                  setJobs([savedJob, ...jobs]);
+              }
+              setIsModalOpen(false);
+          }
+      } catch (err) {
+          console.error('Failed to save job', err);
       }
-      setIsModalOpen(false);
+  };
+
+  const deleteJob = async (id: string) => {
+      try {
+          const res = await fetch(`/api/jobs?id=${id}`, { method: 'DELETE' });
+          const data = await res.json();
+          if (data.success) {
+              setJobs(jobs.filter(j => j.id !== id));
+              setIsModalOpen(false);
+          }
+      } catch (err) {
+          console.error('Failed to delete job', err);
+      }
   };
 
   const activeItem = apps.find(x => x.id === activeId);
@@ -194,8 +292,7 @@ export default function RecruitmentOpsPage() {
       {/* Sidebar */}
       <aside className="w-64 hidden lg:flex flex-col z-20 bg-white border-r border-slate-200">
           <div className="p-6 flex items-center gap-3 border-b border-slate-100">
-              <img src="https://demo.hmhlabz.com/immihire/wp-content/uploads/immihire-logo.webp" alt="Logo" className="w-8 h-8 object-contain" />
-              <h1 className="font-heading font-bold text-xl text-darkBlue tracking-tight">Immi<span className="text-primary">Hire</span></h1>
+              <Image src="/logo.png" alt="Eurovanta Talent Logo" width={120} height={32} className="object-contain" />
           </div>
           <nav className="flex-1 px-4 py-6 space-y-1">
               <Link href="/dashboard" className="nav-link text-slate-500 hover:text-primary hover:bg-blue-50 flex items-center gap-3 p-3 rounded-xl transition-colors"><i className="fa-solid fa-grid-2"></i> Dashboard</Link>
@@ -412,6 +509,9 @@ export default function RecruitmentOpsPage() {
                       </div>
 
                       <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                          {modalForm.id && (
+                              <button type="button" onClick={() => deleteJob(modalForm.id as string)} className="px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 rounded-lg border border-red-200 mr-auto">Delete</button>
+                          )}
                           <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50 rounded-lg border border-slate-300">Cancel</button>
                           <button type="submit" className="px-6 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-700 rounded-lg shadow-lg">Save Changes</button>
                       </div>

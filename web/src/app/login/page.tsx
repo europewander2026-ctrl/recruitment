@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
@@ -151,7 +152,7 @@ export default function LoginPage() {
   return (
     <div className="bg-[#000814] h-screen flex items-center justify-center overflow-hidden relative font-sans text-white">
       <Head>
-        <title>Admin Portal | Eurovanta Talent</title>
+        <title>Eurovanta Talent Admin | Eurovanta Talent</title>
       </Head>
 
       {/* Network Background */}
@@ -165,9 +166,9 @@ export default function LoginPage() {
 
         <div className="text-center mb-10">
           <div className="inline-block p-3 rounded-full bg-white/5 border border-white/10 mb-4 shadow-[0_0_20px_rgba(13,95,183,0.3)]">
-            <img src="https://demo.hmhlabz.com/immihire/wp-content/uploads/immihire-logo.webp" alt="Logo" className="w-12 h-12 object-contain filter brightness-200" />
+            <Image src="/logo.png" alt="Eurovanta Talent Logo" width={48} height={48} className="object-contain filter brightness-200" />
           </div>
-          <h1 className="font-heading font-bold text-2xl tracking-tight">Admin Portal</h1>
+          <h1 className="font-heading font-bold text-2xl tracking-tight">Eurovanta Talent Admin</h1>
           <p className="text-gray-400 text-xs font-mono mt-2 uppercase tracking-widest">Restricted Access // Level 5</p>
         </div>
 
