@@ -29,9 +29,11 @@ export default function LandingPage() {
                     <Image src="/logo.png" alt="Eurovanta Talent Logo" width={120} height={32} priority className="object-contain" />
                 </Link>
                 <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
-                    <a href="#benefits" className="hover:text-primary transition-colors">Benefits</a>
-                    <a href="#process" className="hover:text-primary transition-colors">How it Works</a>
-                    <Link href="/verify" className="hover:text-primary transition-colors">Verify Document</Link>
+                    <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+                    <Link href="#jobs" className="hover:text-primary transition-colors">Available Positions</Link>
+                    <Link href="#apply" className="hover:text-primary transition-colors">Apply Now</Link>
+                    <Link href="/verify" className="hover:text-primary transition-colors">Verify Your Letter</Link>
+                    <Link href="#contact" className="hover:text-primary transition-colors">Contact</Link>
                 </nav>
                 <div className="flex items-center gap-4">
                     <Link href="/verify" className="hidden md:block text-sm font-bold text-primary hover:text-blue-700 transition-colors">
@@ -55,21 +57,27 @@ export default function LandingPage() {
                 <div className="flex flex-col lg:flex-row items-center gap-16">
                     <div className="lg:w-1/2 text-center lg:text-left z-10">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-primary font-bold text-xs uppercase tracking-widest mb-6 shadow-sm">
-                            Next-Gen Recruitment
+                            Trusted European Recruitment Agency
                         </div>
                         <h1 className="font-heading font-bold text-5xl lg:text-7xl text-darkBlue leading-tight mb-6 tracking-tight">
-                            Seamless Global <br className="hidden lg:block" /><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">Recruitment</span>
+                            Work in Europe. <br className="hidden lg:block" /><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">Live Your Potential.</span>
                         </h1>
                         <p className="text-slate-500 text-lg mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                            Connecting world-class talent with premier global opportunities. Transparent, verified, and borderless placement for the modern workforce.
+                            Eurovanta Talent connects skilled professionals with verified employers across Europe. From Poland to Latvia, we place real people in real jobs — with full documentation, legal support, and a transparent process from application to arrival.
                         </p>
-                        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                            <Link href="/verify" className="w-full sm:w-auto px-8 py-4 bg-primary text-white font-bold rounded-full shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-1 transition-all">
-                                Verify Official Document
+                        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-10">
+                            <Link href="#jobs" className="w-full sm:w-auto px-8 py-4 bg-primary text-white font-bold rounded-full shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-1 transition-all">
+                                Browse Open Positions
                             </Link>
-                            <a href="#process" className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 font-bold rounded-full border border-slate-200 hover:bg-slate-50 transition-colors">
-                                See How It Works
-                            </a>
+                            <Link href="/verify" className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 font-bold rounded-full border border-slate-200 hover:bg-slate-50 transition-colors">
+                                Verify Your Offer Letter
+                            </Link>
+                        </div>
+                        <div className="flex flex-wrap justify-center lg:justify-start gap-4 text-xs font-bold text-slate-400">
+                            <span>✦ Legally Registered</span>
+                            <span>✦ EU-Compliant Contracts</span>
+                            <span>✦ Document-Verified</span>
+                            <span>✦ GDPR Compliant</span>
                         </div>
                     </div>
                     
@@ -184,8 +192,8 @@ export default function LandingPage() {
                         <div className="w-24 h-24 bg-white rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.05)] border-4 border-slate-50 flex items-center justify-center text-3xl text-slate-400 mb-6 transition-colors hover:border-primary hover:text-primary">
                             1
                         </div>
-                        <h4 className="font-bold text-lg text-darkBlue mb-2">Apply & Interview</h4>
-                        <p className="text-sm text-slate-500 leading-relaxed">Submit your detailed profile and undergo our rigorous technical screening and interview process.</p>
+                        <h4 className="font-bold text-lg text-darkBlue mb-2">Browse & Apply</h4>
+                        <p className="text-sm text-slate-500 leading-relaxed">Choose a position that matches your skills. Submit your application through our secure online form. No agents, no middlemen.</p>
                     </div>
 
                     {/* Step 2 */}
@@ -193,8 +201,8 @@ export default function LandingPage() {
                         <div className="w-24 h-24 bg-primary rounded-full shadow-[0_10px_30px_rgba(13,95,183,0.3)] border-4 border-blue-100 flex items-center justify-center text-3xl text-white mb-6">
                             2
                         </div>
-                        <h4 className="font-bold text-lg text-darkBlue mb-2">Get Verified</h4>
-                        <p className="text-sm text-slate-500 leading-relaxed">Your professional documents and global credentials are cryptographically verified and securely stored.</p>
+                        <h4 className="font-bold text-lg text-darkBlue mb-2">Review & Selection</h4>
+                        <p className="text-sm text-slate-500 leading-relaxed">Our team reviews your application carefully. Shortlisted candidates are contacted directly for assessment through official channels.</p>
                     </div>
 
                     {/* Step 3 */}
@@ -202,16 +210,31 @@ export default function LandingPage() {
                         <div className="w-24 h-24 bg-white rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.05)] border-4 border-slate-50 flex items-center justify-center text-3xl text-slate-400 mb-6 transition-colors hover:border-primary hover:text-primary">
                             3
                         </div>
-                        <h4 className="font-bold text-lg text-darkBlue mb-2">Receive Offer</h4>
-                        <p className="text-sm text-slate-500 leading-relaxed">Accept your official digital offer letter and automatically begin your seamless relocation journey.</p>
+                        <h4 className="font-bold text-lg text-darkBlue mb-2">Receive Your Letter</h4>
+                        <p className="text-sm text-slate-500 leading-relaxed">Successful candidates receive an official Letter containing a unique verification code to download securely.</p>
                     </div>
                 </div>
              </div>
         </section>
 
-        {/* Task 1.5: Trust & Conversion */}
+        {/* Task 1.5: Trust & Conversion & Fraud Warning */}
         <section className="py-24 bg-white">
             <div className="container mx-auto px-6 lg:px-12">
+                <div className="bg-red-50 border border-red-100 rounded-3xl p-10 mb-16 shadow-sm">
+                    <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
+                        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-500 text-3xl flex-shrink-0">
+                            <i className="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-bold text-red-700 mb-2">Protect Yourself from Fraud</h3>
+                            <p className="text-slate-600 text-sm leading-relaxed mb-4">
+                                Fraudsters sometimes impersonate recruitment agencies. <strong>Eurovanta Talent will NEVER</strong> ask for payment before you receive a verified offer letter, contact you through WhatsApp as official communication, or issue letters for Hungary or Croatia (both programmes are permanently closed).
+                            </p>
+                            <p className="text-sm font-bold text-slate-700">If something does not feel right — stop and verify at <a href="mailto:verify@eurovantatalent.com" className="text-primary hover:underline">verify@eurovantatalent.com</a></p>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="bg-darkBlue rounded-[3rem] p-12 lg:p-20 text-center relative overflow-hidden shadow-[0_20px_50px_rgba(13,95,183,0.2)]">
                     <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-primary/20 to-transparent pointer-events-none"></div>
                     <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-blue-500/20 rounded-full filter blur-[80px] pointer-events-none"></div>
@@ -230,21 +253,38 @@ export default function LandingPage() {
             </div>
         </section>
 
-        {/* Task 1.1: Global Footer */}
+        {/* Global Footer */}
         <footer className="bg-slate-50 border-t border-slate-200 pt-16 pb-8">
             <div className="container mx-auto px-6 lg:px-12">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
-                    <Link href="/" className="font-heading font-bold text-2xl tracking-tight text-darkBlue">
-                        <Image src="/logo.png" alt="Eurovanta Talent Logo" width={120} height={32} className="object-contain" />
-                    </Link>
+                    <div className="text-center md:text-left">
+                        <Link href="/" className="font-heading font-bold text-2xl tracking-tight text-darkBlue">
+                            <Image src="/logo.png" alt="Eurovanta Talent Logo" width={120} height={32} className="object-contain" />
+                        </Link>
+                        <p className="text-slate-500 text-sm mt-2">Connecting Talent with Europe</p>
+                    </div>
                     <div className="flex flex-wrap justify-center gap-6 text-sm text-slate-500 font-medium">
-                        <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
-                        <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
-                        <a href="#" className="hover:text-primary transition-colors">Contact Support</a>
+                        <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+                        <Link href="#jobs" className="hover:text-primary transition-colors">Available Positions</Link>
+                        <Link href="#apply" className="hover:text-primary transition-colors">Apply Now</Link>
+                        <Link href="/verify" className="hover:text-primary transition-colors">Verify Your Letter</Link>
+                        <Link href="/legal/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+                        <Link href="/legal/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>
+                        <Link href="/legal/cookie-policy" className="hover:text-primary transition-colors">Cookie Policy</Link>
+                        <Link href="/legal/gdpr-policy" className="hover:text-primary transition-colors">GDPR Policy</Link>
                     </div>
                 </div>
+                
+                <div className="text-center mb-8">
+                    <p className="text-sm font-bold text-slate-600">Poland | Czech Republic | Serbia | Lithuania | Latvia</p>
+                </div>
+
+                <div className="text-center text-xs text-slate-400 max-w-4xl mx-auto mb-8">
+                    <p>Eurovanta Talent is a registered recruitment agency operating in compliance with EU employment and data protection regulations. We do not charge placement fees. A document handling fee of €25 applies only after successful candidate selection and letter verification.</p>
+                </div>
+
                 <div className="text-center text-sm text-slate-400 border-t border-slate-200 pt-8">
-                    &copy; {new Date().getFullYear()} Eurovanta Talent Talent Solutions. All rights reserved.
+                    &copy; {new Date().getFullYear()} Eurovanta Talent. All Rights Reserved.
                 </div>
             </div>
         </footer>

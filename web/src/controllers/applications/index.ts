@@ -18,7 +18,35 @@ export async function GET(req: Request) {
       orderBy: { createdAt: 'desc' },
     });
 
-    return NextResponse.json({ success: true, data: applications });
+    // Dynamic AI Score calculation based on presence of key attributes
+    const enhancedApps = applications.map(app => {
+        let dynamicScore = 40; // Base score
+        
+        // Experience bump
+        if (app.exp) {
+            const years = parseInt(app.exp);
+            if (!isNaN(years) && years >= 5) dynamicScore += 25;
+            else if (!isNaN(years) && years >= 2) dynamicScore += 15;
+            else dynamicScore += 10;
+        }
+
+        // Education bump
+        if (app.edu && app.edu.toLowerCase() !== 'high school' && app.edu.toLowerCase() !== 'none') {
+            dynamicScore += 20;
+        }
+
+        // Visa bump
+        if (app.visaStatus && app.visaStatus.toLowerCase() !== 'none') {
+            dynamicScore += 15;
+        }
+
+        return {
+            ...app,
+            score: app.score > 0 ? app.score : Math.min(dynamicScore, 99) // fallback to dynamic score
+        };
+    });
+
+    return NextResponse.json({ success: true, data: enhancedApps });
   } catch (error) {
     console.error('Fetch applications error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

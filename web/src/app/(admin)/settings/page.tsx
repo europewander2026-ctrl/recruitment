@@ -12,7 +12,7 @@ interface Notification {
 }
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<'profile' | 'platform'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'platform' | 'cms'>('profile');
   
   // Profile State
   const [email, setEmail] = useState('');
@@ -23,6 +23,12 @@ export default function SettingsPage() {
   const [soundAlerts, setSoundAlerts] = useState(true);
   const [publicForms, setPublicForms] = useState(true);
 
+  // CMS State
+  const [cmsSlug, setCmsSlug] = useState('privacy-policy');
+  const [cmsTitle, setCmsTitle] = useState('Privacy Policy');
+  const [cmsContent, setCmsContent] = useState('');
+  const [cmsMsg, setCmsMsg] = useState('');
+
   // Notification State
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([
@@ -31,8 +37,35 @@ export default function SettingsPage() {
   ]);
 
   useEffect(() => {
-     // Pre-load logic or fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/notifications`) goes here.
-  }, []);
+     if (activeTab === 'cms') {
+         fetch(`/api/content?slug=${cmsSlug}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    setCmsContent(data.data.content);
+                } else {
+                    setCmsContent('');
+                }
+            });
+     }
+  }, [activeTab, cmsSlug]);
+
+  const handleCmsUpdate = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setCmsMsg("Saving...");
+      try {
+          const res = await fetch('/api/content', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ slug: cmsSlug, title: cmsTitle, content: cmsContent })
+          });
+          if (res.ok) setCmsMsg("Content saved successfully!");
+          else setCmsMsg("Error saving content.");
+      } catch (err) {
+          setCmsMsg("Operation failed.");
+      }
+      setTimeout(() => setCmsMsg(''), 3000);
+  };
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -138,6 +171,12 @@ export default function SettingsPage() {
                       >
                           <i className="fa-solid fa-sliders mr-2"></i> Platform Constants
                       </button>
+                      <button 
+                          onClick={() => setActiveTab('cms')} 
+                          className={`pb-4 px-4 font-bold text-sm transition-colors border-b-2 ${activeTab === 'cms' ? 'border-primary text-primary' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+                      >
+                          <i className="fa-solid fa-file-contract mr-2"></i> Legal Content
+                      </button>
                   </div>
 
                   <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] relative overflow-hidden">
@@ -221,6 +260,49 @@ export default function SettingsPage() {
                                       </button>
                                   </div>
                               </div>
+                          </div>
+                      )}
+
+                      {activeTab === 'cms' && (
+                          <div className="animate-in fade-in slide-in-from-bottom-2 relative z-10">
+                              <h3 className="font-heading font-bold text-xl text-darkBlue mb-6">Legal Content Management</h3>
+                              
+                              <form onSubmit={handleCmsUpdate} className="space-y-6 max-w-4xl">
+                                  <div>
+                                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Select Page to Edit</label>
+                                      <select 
+                                        value={cmsSlug} 
+                                        onChange={e => {
+                                            setCmsSlug(e.target.value);
+                                            setCmsTitle(e.target.options[e.target.selectedIndex].text);
+                                        }}
+                                        className="w-full md:w-1/2 bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary transition-colors"
+                                      >
+                                          <option value="privacy-policy">Privacy Policy</option>
+                                          <option value="terms-of-service">Terms of Service</option>
+                                          <option value="cookie-policy">Cookie Policy</option>
+                                          <option value="gdpr-policy">GDPR Policy</option>
+                                      </select>
+                                  </div>
+                                  
+                                  <div>
+                                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Page Content (Markdown / Text)</label>
+                                      <textarea 
+                                          rows={20}
+                                          value={cmsContent}
+                                          onChange={e => setCmsContent(e.target.value)}
+                                          className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-primary transition-colors font-mono"
+                                          placeholder="Enter page content here..."
+                                      />
+                                  </div>
+
+                                  <div className="flex items-center gap-4 pt-4">
+                                      <button type="submit" className="px-8 py-3 bg-primary text-white font-bold text-sm tracking-wider uppercase rounded-xl hover:bg-blue-700 shadow-md shadow-blue-500/20 transition-all flex items-center gap-2">
+                                          <i className="fa-solid fa-save"></i> Save Content
+                                      </button>
+                                      {cmsMsg && <span className={`text-xs font-bold ${cmsMsg.includes('Error') || cmsMsg.includes('failed') ? 'text-red-500' : 'text-green-600'} animate-pulse`}>{cmsMsg}</span>}
+                                  </div>
+                              </form>
                           </div>
                       )}
                   </div>

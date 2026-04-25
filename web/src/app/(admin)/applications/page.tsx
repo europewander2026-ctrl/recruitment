@@ -36,6 +36,8 @@ interface Applicant {
   score: number;
   skills: number[];
   timeline: { date: string, title: string, desc?: string, status: 'completed' | 'pending' }[];
+  status?: string;
+  visaStatus?: string;
 }
 
 // Fallback/Mock data matching the design file for immediate preview
@@ -137,6 +139,57 @@ export default function ApplicationsPage() {
     fetchApplications();
   }, [filter]);
 
+  const handleUpdateStatus = async (status: string) => {
+      if (!selectedApp) return;
+      try {
+          const res = await fetch('/api/applications/status', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: selectedApp.id, status })
+          });
+          const data = await res.json();
+          if (data.success) {
+              setApplicants(prev => prev.map(a => a.id === selectedApp.id ? { ...a, status } : a));
+              setSelectedApp(null); // Deselect to refresh view or show it's gone
+          }
+      } catch (err) {
+          console.error(err);
+      }
+  };
+
+  const handleExportCSV = () => {
+      if (applicants.length === 0) return;
+      
+      const headers = ['ID', 'Name', 'Role', 'Location', 'Experience', 'Education', 'Status', 'Score', 'Visa'];
+      const csvRows = [headers.join(',')];
+      
+      applicants.forEach(app => {
+          const row = [
+              app.id,
+              `"${app.name || ''}"`,
+              `"${app.role || ''}"`,
+              `"${app.location || ''}"`,
+              `"${app.exp || ''}"`,
+              `"${app.edu || ''}"`,
+              `"${app.status || 'pending'}"`,
+              app.score || 0,
+              `"${app.visaStatus || 'None'}"`
+          ];
+          csvRows.push(row.join(','));
+      });
+      
+      const csvString = csvRows.join('\n');
+      const blob = new Blob([csvString], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('hidden', '');
+      a.setAttribute('href', url);
+      a.setAttribute('download', 'applications.csv');
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+  };
+
   return (
     <>
 <Head><title>Application Center | Eurovanta Talent Admin</title></Head>
@@ -197,7 +250,7 @@ export default function ApplicationsPage() {
                             <option>Rejected</option>
                         </select>
                     </div>
-                    <button className="bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all">
+                    <button onClick={handleExportCSV} className="bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all">
                         <i className="fa-solid fa-download mr-2"></i> Export CSV
                     </button>
                 </div>
@@ -366,10 +419,10 @@ export default function ApplicationsPage() {
 
                       {/* Actions */}
                       <div className="flex gap-4 pt-4">
-                          <button className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-lg shadow-green-200 transition-all text-sm uppercase tracking-wider">
+                          <button onClick={() => handleUpdateStatus('shortlisted')} className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-lg shadow-green-200 transition-all text-sm uppercase tracking-wider">
                               Approve & Shortlist
                           </button>
-                          <button className="flex-1 py-3 bg-white border border-red-200 text-red-500 hover:bg-red-50 font-bold rounded-lg transition-all text-sm uppercase tracking-wider">
+                          <button onClick={() => handleUpdateStatus('rejected')} className="flex-1 py-3 bg-white border border-red-200 text-red-500 hover:bg-red-50 font-bold rounded-lg transition-all text-sm uppercase tracking-wider">
                               Reject
                           </button>
                       </div>

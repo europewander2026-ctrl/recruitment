@@ -42,16 +42,8 @@ export default function Sidebar() {
 
                 <p className="text-xs font-bold text-slate-400 uppercase px-4 mt-8 mb-3 tracking-wider">System</p>
                 
-                <Link href="/settings" className={`nav-link flex items-center gap-3 p-3 rounded-xl transition-colors ${pathname === '/settings' ? 'text-primary bg-blue-50 font-medium border-l-4 border-primary' : 'text-slate-500 hover:text-primary hover:bg-blue-50'}`}>
+                <Link href="/settings" className={`nav-link flex items-center gap-3 p-3 rounded-xl transition-colors ${pathname.startsWith('/settings') ? 'text-primary bg-blue-50 font-medium border-l-4 border-primary' : 'text-slate-500 hover:text-primary hover:bg-blue-50'}`}>
                     <i className="fa-solid fa-gear w-5 text-center"></i> Settings
-                </Link>
-                
-                <Link href="/settings/profile" className={`nav-link flex items-center gap-3 p-3 rounded-xl transition-colors ${pathname === '/settings/profile' ? 'text-primary bg-blue-50 font-medium border-l-4 border-primary' : 'text-slate-500 hover:text-primary hover:bg-blue-50'}`}>
-                    <i className="fa-solid fa-user-shield w-5 text-center"></i> Profile
-                </Link>
-
-                <Link href="/settings/general" className={`nav-link flex items-center gap-3 p-3 rounded-xl transition-colors ${pathname === '/settings/general' ? 'text-primary bg-blue-50 font-medium border-l-4 border-primary' : 'text-slate-500 hover:text-primary hover:bg-blue-50'}`}>
-                    <i className="fa-solid fa-sliders w-5 text-center"></i> General
                 </Link>
 
                 <button 

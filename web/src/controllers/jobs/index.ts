@@ -35,6 +35,7 @@ export async function POST(req: Request) {
         country: data.country,
         salary: data.salary,
         category: data.category,
+        responsibilities: data.responsibilities,
         status: data.status ? 'active' : 'paused',
       },
     });
@@ -61,6 +62,7 @@ export async function PUT(req: Request) {
           country: data.country,
           salary: data.salary,
           category: data.category,
+          responsibilities: data.responsibilities,
           status: data.status ? 'active' : 'paused',
         },
       });

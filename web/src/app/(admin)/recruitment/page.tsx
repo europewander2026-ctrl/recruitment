@@ -27,7 +27,8 @@ interface Job {
   country: string;
   salary: string;
   category: string;
-  description: string;
+  description?: string;
+  responsibilities?: string;
   status: boolean;
 }
 
@@ -97,6 +98,7 @@ const getCountryPill = (c: string) => c === 'uae' ? 'bg-blue-50 text-blue-600 bo
 export default function RecruitmentOpsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [jobFilter, setJobFilter] = useState('all');
+  const [stats, setStats] = useState({ totalCandidates: 0, activeJobs: 0, pendingReview: 0 });
   
   // Kanban State
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -136,11 +138,21 @@ export default function RecruitmentOpsPage() {
         }
       })
       .catch(err => console.error('Error fetching jobs', err));
+
+    // Fetch Stats
+    fetch('/api/stats')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) {
+           setStats(data.data);
+        }
+      })
+      .catch(err => console.error('Error fetching stats', err));
   }, []);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalForm, setModalForm] = useState<Partial<Job>>({ country: 'portugal', category: 'Blue Collar', status: true });
+  const [modalForm, setModalForm] = useState<Partial<Job>>({ country: 'portugal', category: 'Blue Collar', status: true, responsibilities: '' });
 
   // Notification State
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -238,9 +250,9 @@ export default function RecruitmentOpsPage() {
   const openModal = (id?: string) => {
       if (id) {
           const job = jobs.find(j => j.id === id);
-          if (job) setModalForm(job);
+          if (job) setModalForm({ ...job, responsibilities: job.responsibilities || '' });
       } else {
-          setModalForm({ title: '', country: 'portugal', salary: '', category: 'Blue Collar', description: '', status: true });
+          setModalForm({ title: '', country: 'portugal', salary: '', category: 'Blue Collar', responsibilities: '', status: true });
       }
       setIsModalOpen(true);
   };
@@ -343,21 +355,21 @@ export default function RecruitmentOpsPage() {
                   <div className="bg-white border border-slate-200 rounded-2xl p-6 flex items-center justify-between border-l-4 border-l-blue-500 shadow-sm">
                       <div>
                           <p className="text-slate-500 text-xs font-bold uppercase">Total Candidates</p>
-                          <h3 className="text-3xl font-bold text-darkBlue mt-1">342</h3>
+                          <h3 className="text-3xl font-bold text-darkBlue mt-1">{stats.totalCandidates}</h3>
                       </div>
                       <div className="w-10 h-10 bg-blue-100 text-primary rounded-lg flex items-center justify-center"><i className="fa-solid fa-users"></i></div>
                   </div>
                   <div className="bg-white border border-slate-200 rounded-2xl p-6 flex items-center justify-between border-l-4 border-l-green-500 shadow-sm">
                       <div>
                           <p className="text-slate-500 text-xs font-bold uppercase">Active Listings</p>
-                          <h3 className="text-3xl font-bold text-darkBlue mt-1">{jobs.filter(j=>j.status).length}</h3>
+                          <h3 className="text-3xl font-bold text-darkBlue mt-1">{stats.activeJobs}</h3>
                       </div>
                       <div className="w-10 h-10 bg-green-100 text-green-600 rounded-lg flex items-center justify-center"><i className="fa-solid fa-briefcase"></i></div>
                   </div>
                   <div className="bg-white border border-slate-200 rounded-2xl p-6 flex items-center justify-between border-l-4 border-l-yellow-500 shadow-sm">
                       <div>
                           <p className="text-slate-500 text-xs font-bold uppercase">Pending Review</p>
-                          <h3 className="text-3xl font-bold text-darkBlue mt-1">{apps.filter(x => x.status === 'received').length}</h3>
+                          <h3 className="text-3xl font-bold text-darkBlue mt-1">{stats.pendingReview}</h3>
                       </div>
                       <div className="w-10 h-10 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center"><i className="fa-solid fa-hourglass-half"></i></div>
                   </div>
@@ -487,6 +499,11 @@ export default function RecruitmentOpsPage() {
                                   <option>Skilled Trade</option>
                               </select>
                           </div>
+                      </div>
+
+                      <div className="mb-4">
+                          <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Job Responsibilities</label>
+                          <textarea rows={3} value={modalForm.responsibilities} onChange={e=>setModalForm({...modalForm, responsibilities: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 focus:outline-none focus:border-primary text-sm" placeholder="List key responsibilities..."></textarea>
                       </div>
 
                       <div className="mb-6 flex gap-4">
