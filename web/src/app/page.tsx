@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
 import Image from 'next/image';
+import { ShieldCheck, Globe, FileLock } from 'lucide-react';
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
@@ -26,20 +27,20 @@ export default function LandingPage() {
         <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'}`}>
             <div className="container mx-auto px-6 lg:px-12 flex justify-between items-center">
                 <Link href="/" className="flex items-center gap-2 font-heading font-bold text-2xl tracking-tight text-darkBlue">
-                    <Image src="/logo.png" alt="Eurovanta Talent Logo" width={120} height={32} priority className="object-contain" />
+                    <Image src="/logo.png" alt="Eurovanta Talent Logo" width={220} height={55} priority className="object-contain" />
                 </Link>
                 <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
                     <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-                    <Link href="#jobs" className="hover:text-primary transition-colors">Available Positions</Link>
-                    <Link href="#apply" className="hover:text-primary transition-colors">Apply Now</Link>
+                    <Link href="/jobs" className="hover:text-primary transition-colors">Available Positions</Link>
+                    <Link href="/jobs" className="hover:text-primary transition-colors">Apply Now</Link>
                     <Link href="/verify" className="hover:text-primary transition-colors">Verify Your Letter</Link>
-                    <Link href="#contact" className="hover:text-primary transition-colors">Contact</Link>
+                    <Link href="/#contact" className="hover:text-primary transition-colors">Contact</Link>
                 </nav>
                 <div className="flex items-center gap-4">
                     <Link href="/verify" className="hidden md:block text-sm font-bold text-primary hover:text-blue-700 transition-colors">
                         Verify Document
                     </Link>
-                    <Link href="/login" className="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-blue-500/30 transition-all">
+                    <Link href="/login" className="bg-[#002366] hover:bg-blue-900 text-white hover:text-amber-500 px-5 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-blue-500/30 transition-all">
                         Admin Login
                     </Link>
                 </div>
@@ -66,7 +67,7 @@ export default function LandingPage() {
                             Eurovanta Talent connects skilled professionals with verified employers across Europe. From Poland to Latvia, we place real people in real jobs — with full documentation, legal support, and a transparent process from application to arrival.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-10">
-                            <Link href="#jobs" className="w-full sm:w-auto px-8 py-4 bg-primary text-white font-bold rounded-full shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-1 transition-all">
+                            <Link href="#jobs" className="w-full sm:w-auto px-8 py-4 bg-[#002366] hover:bg-blue-900 text-white hover:text-amber-500 font-bold rounded-full shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-1 transition-all">
                                 Browse Open Positions
                             </Link>
                             <Link href="/verify" className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 font-bold rounded-full border border-slate-200 hover:bg-slate-50 transition-colors">
@@ -137,8 +138,8 @@ export default function LandingPage() {
                     {/* Card 1 */}
                     <div className="bg-slate-50 rounded-3xl p-8 border border-slate-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
-                        <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center text-2xl text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
-                            <i className="fa-solid fa-shield-halved"></i>
+                        <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-[#002366] transition-colors">
+                            <ShieldCheck className="w-10 h-10 text-[#002366] group-hover:text-amber-500 transition-colors" />
                         </div>
                         <h3 className="font-bold text-xl text-darkBlue mb-3">Verified Placements</h3>
                         <p className="text-slate-500 text-sm leading-relaxed">
@@ -148,8 +149,8 @@ export default function LandingPage() {
                     {/* Card 2 */}
                     <div className="bg-slate-50 rounded-3xl p-8 border border-slate-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
-                        <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center text-2xl text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
-                            <i className="fa-solid fa-globe"></i>
+                        <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-[#002366] transition-colors">
+                            <Globe className="w-10 h-10 text-[#002366] group-hover:text-amber-500 transition-colors" />
                         </div>
                         <h3 className="font-bold text-xl text-darkBlue mb-3">Global Reach</h3>
                         <p className="text-slate-500 text-sm leading-relaxed">
@@ -159,8 +160,8 @@ export default function LandingPage() {
                     {/* Card 3 */}
                     <div className="bg-slate-50 rounded-3xl p-8 border border-slate-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
-                        <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center text-2xl text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
-                            <i className="fa-solid fa-file-shield"></i>
+                        <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-[#002366] transition-colors">
+                            <FileLock className="w-10 h-10 text-[#002366] group-hover:text-amber-500 transition-colors" />
                         </div>
                         <h3 className="font-bold text-xl text-darkBlue mb-3">Secure Documents</h3>
                         <p className="text-slate-500 text-sm leading-relaxed">
@@ -235,7 +236,7 @@ export default function LandingPage() {
                     </div>
                 </div>
 
-                <div className="bg-darkBlue rounded-[3rem] p-12 lg:p-20 text-center relative overflow-hidden shadow-[0_20px_50px_rgba(13,95,183,0.2)]">
+                <div className="bg-[#002366] rounded-[3rem] p-12 lg:p-20 text-center relative overflow-hidden shadow-[0_20px_50px_rgba(13,95,183,0.2)]">
                     <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-primary/20 to-transparent pointer-events-none"></div>
                     <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-blue-500/20 rounded-full filter blur-[80px] pointer-events-none"></div>
                     <div className="absolute -top-20 -right-20 w-80 h-80 bg-primary/30 rounded-full filter blur-[80px] pointer-events-none"></div>
@@ -245,7 +246,7 @@ export default function LandingPage() {
                         <p className="text-blue-100 text-lg mb-10 leading-relaxed max-w-2xl mx-auto">
                             Our public portal allows you to instantly verify the authenticity and status of any Eurovanta Talent offer letter or contract.
                         </p>
-                        <Link href="/verify" className="inline-block px-10 py-5 bg-white text-darkBlue font-bold rounded-full text-lg shadow-xl hover:scale-105 hover:shadow-2xl hover:shadow-white/20 transition-all">
+                        <Link href="/verify" className="inline-block px-10 py-5 bg-[#002366] border border-white/20 text-white font-bold rounded-full text-lg shadow-xl hover:scale-105 hover:bg-blue-900 hover:text-amber-500 hover:shadow-2xl hover:shadow-white/20 transition-all">
                             Access Verification Portal
                         </Link>
                     </div>
@@ -253,20 +254,46 @@ export default function LandingPage() {
             </div>
         </section>
 
+        {/* Task 1.9: Contact */}
+        <section id="contact" className="py-24 bg-slate-50 border-t border-slate-200">
+            <div className="container mx-auto px-6 lg:px-12">
+                <div className="text-center max-w-2xl mx-auto mb-16">
+                    <h2 className="font-heading font-bold text-3xl lg:text-4xl text-darkBlue mb-4">Get in Touch</h2>
+                    <p className="text-slate-500 leading-relaxed">Have a question about the process? Reach out to our dedicated support teams.</p>
+                </div>
+                <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex items-start gap-4">
+                        <div className="w-12 h-12 bg-blue-50 text-primary rounded-full flex items-center justify-center text-xl shrink-0"><i className="fa-solid fa-envelope"></i></div>
+                        <div>
+                            <h4 className="font-bold text-darkBlue mb-1">General Enquiries</h4>
+                            <a href="mailto:info@eurovantatalent.com" className="text-slate-500 text-sm hover:text-primary transition-colors">info@eurovantatalent.com</a>
+                        </div>
+                    </div>
+                    <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex items-start gap-4">
+                        <div className="w-12 h-12 bg-blue-50 text-primary rounded-full flex items-center justify-center text-xl shrink-0"><i className="fa-solid fa-shield-check"></i></div>
+                        <div>
+                            <h4 className="font-bold text-darkBlue mb-1">Verification Support</h4>
+                            <a href="mailto:verify@eurovantatalent.com" className="text-slate-500 text-sm hover:text-primary transition-colors">verify@eurovantatalent.com</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         {/* Global Footer */}
-        <footer className="bg-slate-50 border-t border-slate-200 pt-16 pb-8">
+        <footer className="bg-white border-t border-slate-200 pt-16 pb-8">
             <div className="container mx-auto px-6 lg:px-12">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
                     <div className="text-center md:text-left">
                         <Link href="/" className="font-heading font-bold text-2xl tracking-tight text-darkBlue">
-                            <Image src="/logo.png" alt="Eurovanta Talent Logo" width={120} height={32} className="object-contain" />
+                            <Image src="/logo.png" alt="Eurovanta Talent Logo" width={220} height={55} className="object-contain" />
                         </Link>
                         <p className="text-slate-500 text-sm mt-2">Connecting Talent with Europe</p>
                     </div>
                     <div className="flex flex-wrap justify-center gap-6 text-sm text-slate-500 font-medium">
                         <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-                        <Link href="#jobs" className="hover:text-primary transition-colors">Available Positions</Link>
-                        <Link href="#apply" className="hover:text-primary transition-colors">Apply Now</Link>
+                        <Link href="/jobs" className="hover:text-primary transition-colors">Available Positions</Link>
+                        <Link href="/jobs" className="hover:text-primary transition-colors">Apply Now</Link>
                         <Link href="/verify" className="hover:text-primary transition-colors">Verify Your Letter</Link>
                         <Link href="/legal/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
                         <Link href="/legal/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>

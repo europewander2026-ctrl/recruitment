@@ -19,12 +19,12 @@ export default async function LegalPage({ params }: { params: { slug: string } }
         <header className="bg-white/80 backdrop-blur-md shadow-sm py-4 sticky top-0 z-50">
             <div className="container mx-auto px-6 lg:px-12 flex justify-between items-center">
                 <Link href="/" className="flex items-center gap-2 font-heading font-bold text-2xl tracking-tight text-darkBlue">
-                    <Image src="/logo.png" alt="Eurovanta Talent Logo" width={120} height={32} priority className="object-contain" />
+                    <Image src="/logo.png" alt="Eurovanta Talent Logo" width={200} height={50} priority className="object-contain" />
                 </Link>
                 <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
                     <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-                    <Link href="/#jobs" className="hover:text-primary transition-colors">Available Positions</Link>
-                    <Link href="/#apply" className="hover:text-primary transition-colors">Apply Now</Link>
+                    <Link href="/jobs" className="hover:text-primary transition-colors">Available Positions</Link>
+                    <Link href="/jobs" className="hover:text-primary transition-colors">Apply Now</Link>
                     <Link href="/verify" className="hover:text-primary transition-colors">Verify Your Letter</Link>
                     <Link href="/#contact" className="hover:text-primary transition-colors">Contact</Link>
                 </nav>
@@ -57,19 +57,19 @@ export default async function LegalPage({ params }: { params: { slug: string } }
         </main>
 
         {/* Global Footer */}
-        <footer className="bg-slate-50 border-t border-slate-200 pt-16 pb-8 mt-auto">
+        <footer className="bg-white border-t border-slate-200 pt-16 pb-8 mt-auto">
             <div className="container mx-auto px-6 lg:px-12">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
                     <div className="text-center md:text-left">
                         <Link href="/" className="font-heading font-bold text-2xl tracking-tight text-darkBlue">
-                            <Image src="/logo.png" alt="Eurovanta Talent Logo" width={120} height={32} className="object-contain" />
+                            <Image src="/logo.png" alt="Eurovanta Talent Logo" width={200} height={50} className="object-contain" />
                         </Link>
                         <p className="text-slate-500 text-sm mt-2">Connecting Talent with Europe</p>
                     </div>
                     <div className="flex flex-wrap justify-center gap-6 text-sm text-slate-500 font-medium">
                         <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-                        <Link href="/#jobs" className="hover:text-primary transition-colors">Available Positions</Link>
-                        <Link href="/#apply" className="hover:text-primary transition-colors">Apply Now</Link>
+                        <Link href="/jobs" className="hover:text-primary transition-colors">Available Positions</Link>
+                        <Link href="/jobs" className="hover:text-primary transition-colors">Apply Now</Link>
                         <Link href="/verify" className="hover:text-primary transition-colors">Verify Your Letter</Link>
                         <Link href="/legal/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
                         <Link href="/legal/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>
