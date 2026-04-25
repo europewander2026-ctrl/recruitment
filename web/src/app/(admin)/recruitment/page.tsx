@@ -286,23 +286,13 @@ export default function RecruitmentOpsPage() {
   const activeItem = apps.find(x => x.id === activeId);
 
   return (
-    <div className="flex h-screen bg-slate-50 font-sans text-slate-700 overflow-hidden">
-      <Head><title>Recruitment Ops | Eurovanta Talent Admin</title></Head>
+    <>
+<Head><title>Recruitment Ops | Eurovanta Talent Admin</title></Head>
 
-      {/* Sidebar */}
-      <aside className="w-64 hidden lg:flex flex-col z-20 bg-white border-r border-slate-200">
-          <div className="p-6 flex items-center gap-3 border-b border-slate-100">
-              <Image src="/logo.png" alt="Eurovanta Talent Logo" width={120} height={32} className="object-contain" />
-          </div>
-          <nav className="flex-1 px-4 py-6 space-y-1">
-              <Link href="/dashboard" className="nav-link text-slate-500 hover:text-primary hover:bg-blue-50 flex items-center gap-3 p-3 rounded-xl transition-colors"><i className="fa-solid fa-grid-2"></i> Dashboard</Link>
-              <Link href="/applications" className="nav-link text-slate-500 hover:text-primary hover:bg-blue-50 flex items-center gap-3 p-3 rounded-xl transition-colors"><i className="fa-solid fa-users"></i> Applications</Link>
-              <Link href="/recruitment" className="nav-link text-primary bg-blue-50 font-medium flex items-center gap-3 p-3 rounded-xl border-l-4 border-primary"><i className="fa-solid fa-briefcase"></i> Recruitment</Link>
-              {/* Omitted rest of sidebar links for conciseness */}
-          </nav>
-      </aside>
+      
+      
 
-      {/* Main Content */}
+      
       <main className="flex-1 flex flex-col overflow-hidden relative">
           <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-10">
               <h2 className="font-heading font-bold text-2xl text-darkBlue">Recruitment Ops</h2>
@@ -519,6 +509,6 @@ export default function RecruitmentOpsPage() {
               </div>
           </div>
       )}
-    </div>
+    </>
   );
 }

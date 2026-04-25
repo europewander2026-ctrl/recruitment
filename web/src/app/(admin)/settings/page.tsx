@@ -67,31 +67,13 @@ export default function SettingsPage() {
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   return (
-    <div className="flex h-screen bg-slate-50 font-sans text-slate-700 overflow-hidden">
-      <Head><title>System Configurations | Eurovanta Talent Admin</title></Head>
+    <>
+<Head><title>System Configurations | Eurovanta Talent Admin</title></Head>
 
-      {/* Sidebar */}
-      <aside className="w-64 hidden lg:flex flex-col z-20 bg-white border-r border-slate-200">
-          <div className="p-6 flex items-center gap-3 border-b border-slate-100">
-              <Image src="/logo.png" alt="Eurovanta Talent Logo" width={120} height={32} className="object-contain" />
-          </div>
-          <nav className="flex-1 px-4 py-6 space-y-1">
-              <Link href="/dashboard" className="nav-link text-slate-500 hover:text-primary hover:bg-blue-50 flex items-center gap-3 p-3 rounded-xl transition-colors"><i className="fa-solid fa-grid-2"></i> Dashboard</Link>
-              <Link href="/applications" className="nav-link text-slate-500 hover:text-primary hover:bg-blue-50 flex items-center gap-3 p-3 rounded-xl transition-colors"><i className="fa-solid fa-users"></i> Applications</Link>
-              <Link href="/recruitment" className="nav-link text-slate-500 hover:text-primary hover:bg-blue-50 flex items-center gap-3 p-3 rounded-xl transition-colors"><i className="fa-solid fa-briefcase"></i> Recruitment</Link>
-              
-              <p className="text-xs font-bold text-slate-400 uppercase px-4 mt-8 mb-3 tracking-wider">System</p>
-              <Link href="/settings" className="nav-link text-primary bg-blue-50 font-medium flex items-center gap-3 p-3 rounded-xl border-l-4 border-primary"><i className="fa-solid fa-gear"></i> Settings</Link>
-              <button 
-                onClick={async () => { await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/auth/logout`, {method: 'POST'}); window.location.href = '/login'; }}
-                className="w-full text-left nav-link text-red-500 hover:text-red-600 hover:bg-red-50 flex items-center gap-3 p-3 rounded-xl transition-colors mt-2"
-              >
-                  <i className="fa-solid fa-power-off"></i> Logout
-              </button>
-          </nav>
-      </aside>
+      
+      
 
-      {/* Main Content */}
+      
       <main className="flex-1 flex flex-col overflow-hidden relative">
           
           {/* Top Bar with Integrated Notification Bell representing Epic 4.4 */}
@@ -246,6 +228,6 @@ export default function SettingsPage() {
               </div>
           </div>
       </main>
-    </div>
+    </>
   );
 }

@@ -138,54 +138,13 @@ export default function ApplicationsPage() {
   }, [filter]);
 
   return (
-    <div className="flex h-screen bg-slate-50 font-sans text-slate-700 overflow-hidden">
-      <Head><title>Application Center | Eurovanta Talent Admin</title></Head>
+    <>
+<Head><title>Application Center | Eurovanta Talent Admin</title></Head>
 
-      {/* Sidebar */}
-      <aside className="sidebar w-64 hidden lg:flex flex-col z-20 bg-white border-r border-slate-200 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-        <div className="p-6 flex items-center gap-3 border-b border-slate-100">
-            <Image src="/logo.png" alt="Eurovanta Talent Logo" width={120} height={32} className="object-contain" />
-        </div>
+      
+      
 
-        <nav className="flex-1 px-4 py-6 space-y-1">
-            <p className="text-xs font-bold text-slate-400 uppercase px-4 mb-3 tracking-wider">Main Menu</p>
-            <Link href="/dashboard" className="nav-link">
-                <i className="fa-solid fa-grid-2 text-lg"></i> Dashboard
-            </Link>
-            <Link href="/applications" className="nav-link active">
-                <i className="fa-solid fa-users text-lg"></i> Applications
-                <span className="ml-auto bg-blue-100 text-primary text-xs font-bold px-2 py-0.5 rounded-full">{applicants.length}</span>
-            </Link>
-            <Link href="/recruitment" className="nav-link">
-                <i className="fa-solid fa-briefcase text-lg"></i> Recruitment
-            </Link>
-
-            <p className="text-xs font-bold text-slate-400 uppercase px-4 mt-8 mb-3 tracking-wider">Content</p>
-            <Link href="/insights" className="nav-link">
-                <i className="fa-solid fa-newspaper text-lg"></i> Insights / Blog
-            </Link>
-            
-            <p className="text-xs font-bold text-slate-400 uppercase px-4 mt-8 mb-3 tracking-wider">System</p>
-            <Link href="/settings" className="nav-link">
-                <i className="fa-solid fa-gear text-lg"></i> Settings
-            </Link>
-            <Link href="/login" className="nav-link text-red-500 hover:text-red-600 hover:bg-red-50">
-                <i className="fa-solid fa-power-off text-lg"></i> Logout
-            </Link>
-        </nav>
-
-        <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-            <div className="flex items-center gap-3 p-2 rounded-xl cursor-pointer hover:bg-white transition shadow-sm border border-transparent hover:border-slate-200">
-                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=100&auto=format&fit=crop" className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm" />
-                <div>
-                    <p className="text-sm font-bold text-slate-800">Admin User</p>
-                    <p className="text-xs text-slate-500">Super Admin</p>
-                </div>
-            </div>
-        </div>
-      </aside>
-
-      {/* Main Content */}
+      
       <main className="flex-1 flex flex-col overflow-hidden relative">
           
         {/* Top Bar */}
@@ -421,6 +380,6 @@ export default function ApplicationsPage() {
           </div>
         </div>
       </main>
-    </div>
+    </>
   );
 }
