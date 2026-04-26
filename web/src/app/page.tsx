@@ -56,15 +56,14 @@ export default function LandingPage() {
                 <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
                     <Link href="/" className="hover:text-primary transition-colors">Home</Link>
                     <Link href="/jobs" className="hover:text-primary transition-colors">Available Positions</Link>
-                    <Link href="/jobs" className="hover:text-primary transition-colors">Apply Now</Link>
                     <Link href="/verify" className="hover:text-primary transition-colors">Verify Your Letter</Link>
                     <Link href="/#contact" className="hover:text-primary transition-colors">Contact</Link>
                 </nav>
                 <div className="flex items-center gap-4">
-                    <Link href="/verify" className="hidden md:block text-sm font-bold text-primary hover:text-blue-700 transition-colors">
+                    <Link href="/verify" className="hidden md:block text-sm font-bold text-[#002366] hover:text-amber-500 transition-colors">
                         Verify Document
                     </Link>
-                    <Link href="/login" className="bg-brandNavy hover:bg-blue-900 text-white hover:text-brandGold px-5 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-blue-500/30 transition-all">
+                    <Link href="/login" className="font-bold bg-[#002366] text-white hover:bg-blue-900 px-5 py-2.5 rounded-full text-sm shadow-lg shadow-blue-500/30 transition-all">
                         Admin Login
                     </Link>
                 </div>
@@ -238,24 +237,84 @@ export default function LandingPage() {
                         <h4 className="font-bold text-lg text-darkBlue mb-2">Receive Your Letter</h4>
                         <p className="text-sm text-slate-500 leading-relaxed">Successful candidates receive an official Letter containing a unique verification code to download securely.</p>
                     </div>
+
+                    {/* Step 4 */}
+                    <div className="relative z-10 flex flex-col items-center text-center max-w-xs w-full mt-12 md:mt-0">
+                        <div className="w-24 h-24 bg-white rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.05)] border-4 border-slate-50 flex items-center justify-center text-3xl text-slate-400 mb-6 transition-colors hover:border-primary hover:text-primary">
+                            4
+                        </div>
+                        <h4 className="font-bold text-lg text-darkBlue mb-2">Verify & Download</h4>
+                        <p className="text-sm text-slate-500 leading-relaxed">Log into our secure portal to verify your documents and download your official paperwork instantly.</p>
+                    </div>
+
+                    {/* Step 5 */}
+                    <div className="relative z-10 flex flex-col items-center text-center max-w-xs w-full mt-12 md:mt-0">
+                        <div className="w-24 h-24 bg-white rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.05)] border-4 border-slate-50 flex items-center justify-center text-3xl text-slate-400 mb-6 transition-colors hover:border-primary hover:text-primary">
+                            5
+                        </div>
+                        <h4 className="font-bold text-lg text-darkBlue mb-2">Travel & Work</h4>
+                        <p className="text-sm text-slate-500 leading-relaxed">Arrive at your destination fully prepared with our ongoing support to begin your new career in Europe.</p>
+                    </div>
                 </div>
              </div>
         </section>
 
         {/* Task 1.5: Trust & Conversion & Fraud Warning */}
+        {/* Task 2: Active Placements Section */}
         <section className="py-24 bg-white">
+            <div className="container mx-auto px-6 lg:px-12">
+                <div className="text-center max-w-2xl mx-auto mb-16">
+                    <h2 className="font-heading font-bold text-3xl lg:text-4xl text-[#002366] mb-4">Where We Place People Right Now</h2>
+                    <p className="text-slate-500 leading-relaxed">Explore our active recruitment corridors across Europe.</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                    {[
+                        { name: "Poland", ind: "Manufacturing, IT, Logistics", contract: "1-3 Years", acc: "Provided" },
+                        { name: "Czech Republic", ind: "Automotive, Healthcare", contract: "1-2 Years", acc: "Assisted" },
+                        { name: "Serbia", ind: "Construction, Logistics", contract: "1 Year", acc: "Provided" },
+                        { name: "Lithuania", ind: "Transport, Logistics", contract: "2 Years", acc: "Assisted" },
+                        { name: "Latvia", ind: "Agriculture, Production", contract: "Seasonal / 1 Year", acc: "Provided" }
+                    ].map(country => (
+                        <div key={country.name} className="bg-slate-50 p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-xl font-bold text-[#002366]">{country.name}</h3>
+                                <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">🟢 Actively Recruiting</span>
+                            </div>
+                            <ul className="space-y-3 text-sm text-slate-600">
+                                <li><strong className="text-slate-800">Industries:</strong> {country.ind}</li>
+                                <li><strong className="text-slate-800">Contract Type:</strong> {country.contract}</li>
+                                <li><strong className="text-slate-800">Accommodation:</strong> {country.acc}</li>
+                            </ul>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center max-w-4xl mx-auto">
+                    <p className="text-amber-800 text-sm font-medium">
+                        <strong>⚠️ Important Notice:</strong> The Hungary and Croatia recruitment programs are currently permanently closed. Eurovanta Talent is not issuing letters for these regions.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        {/* Task 1.5: Trust & Conversion & Fraud Warning */}
+        <section className="py-24 bg-slate-50">
             <div className="container mx-auto px-6 lg:px-12">
                 <div className="bg-red-50 border border-red-100 rounded-3xl p-10 mb-16 shadow-sm">
                     <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
                         <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-500 text-3xl flex-shrink-0">
-                            <i className="fa-solid fa-triangle-exclamation"></i>
+                            <ShieldCheck size={32} />
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold text-red-700 mb-2">Protect Yourself from Fraud</h3>
-                            <p className="text-slate-600 text-sm leading-relaxed mb-4">
-                                <strong>Eurovanta Talent will NEVER</strong> {config.home_fraud_warning.replace('Fraudsters sometimes impersonate recruitment agencies. Eurovanta Talent will NEVER ', '')}
-                            </p>
-                            <p className="text-sm font-bold text-slate-700">If something does not feel right — stop and verify at <a href="mailto:verify@eurovantatalent.com" className="text-primary hover:underline">verify@eurovantatalent.com</a></p>
+                            <h3 className="text-xl font-bold text-red-700 mb-4">Protect Yourself from Fraud</h3>
+                            <p className="text-slate-700 text-sm mb-3"><strong>Eurovanta Talent will NEVER:</strong></p>
+                            <ul className="list-disc list-inside text-slate-600 text-sm leading-relaxed mb-6 space-y-2">
+                                <li>Ask for upfront payment before you receive a verified offer letter.</li>
+                                <li>Contact you through WhatsApp as an official communication channel.</li>
+                                <li>Issue letters for Hungary or Croatia (both programmes are permanently closed).</li>
+                            </ul>
+                            <p className="text-sm font-bold text-slate-700">If something does not feel right — stop and verify at <a href="mailto:verify@eurovantatalent.com" className="text-[#002366] hover:underline">verify@eurovantatalent.com</a></p>
                         </div>
                     </div>
                 </div>
@@ -279,26 +338,72 @@ export default function LandingPage() {
         </section>
 
         {/* Task 1.9: Contact */}
+        {/* Task 1.9: Contact */}
         <section id="contact" className="py-24 bg-slate-50 border-t border-slate-200">
             <div className="container mx-auto px-6 lg:px-12">
                 <div className="text-center max-w-2xl mx-auto mb-16">
-                    <h2 className="font-heading font-bold text-3xl lg:text-4xl text-darkBlue mb-4">Get in Touch</h2>
+                    <h2 className="font-heading font-bold text-3xl lg:text-4xl text-[#002366] mb-4">Get in Touch</h2>
                     <p className="text-slate-500 leading-relaxed">Have a question about the process? Reach out to our dedicated support teams.</p>
                 </div>
-                <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex items-start gap-4">
-                        <div className="w-12 h-12 bg-blue-50 text-primary rounded-full flex items-center justify-center text-xl shrink-0"><i className="fa-solid fa-envelope"></i></div>
-                        <div>
-                            <h4 className="font-bold text-darkBlue mb-1">General Enquiries</h4>
-                            <a href="mailto:info@eurovantatalent.com" className="text-slate-500 text-sm hover:text-primary transition-colors">info@eurovantatalent.com</a>
+                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+                    {/* Left Column */}
+                    <div className="space-y-8">
+                        <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex items-start gap-4">
+                            <div className="w-12 h-12 bg-blue-50 text-[#002366] rounded-full flex items-center justify-center text-xl shrink-0"><i className="fa-solid fa-envelope"></i></div>
+                            <div>
+                                <h4 className="font-bold text-[#002366] mb-2">Email Directory</h4>
+                                <ul className="space-y-2 text-sm">
+                                    <li><strong className="text-slate-700">General:</strong> <a href="mailto:info@eurovantatalent.com" className="text-slate-500 hover:text-[#002366]">info@eurovantatalent.com</a></li>
+                                    <li><strong className="text-slate-700">Verification:</strong> <a href="mailto:verify@eurovantatalent.com" className="text-slate-500 hover:text-[#002366]">verify@eurovantatalent.com</a></li>
+                                    <li><strong className="text-slate-700">Partners:</strong> <a href="mailto:partners@eurovantatalent.com" className="text-slate-500 hover:text-[#002366]">partners@eurovantatalent.com</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex items-start gap-4">
+                            <div className="w-12 h-12 bg-blue-50 text-[#002366] rounded-full flex items-center justify-center text-xl shrink-0"><i className="fa-solid fa-clock"></i></div>
+                            <div>
+                                <h4 className="font-bold text-[#002366] mb-2">Office Hours</h4>
+                                <p className="text-slate-500 text-sm">Monday – Friday<br/>09:00 – 17:00 CET</p>
+                                <p className="text-slate-500 text-sm mt-2"><strong className="text-slate-700">Response Time:</strong> 24-48 Hours</p>
+                            </div>
                         </div>
                     </div>
-                    <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex items-start gap-4">
-                        <div className="w-12 h-12 bg-blue-50 text-primary rounded-full flex items-center justify-center text-xl shrink-0"><i className="fa-solid fa-shield-check"></i></div>
-                        <div>
-                            <h4 className="font-bold text-darkBlue mb-1">Verification Support</h4>
-                            <a href="mailto:verify@eurovantatalent.com" className="text-slate-500 text-sm hover:text-primary transition-colors">verify@eurovantatalent.com</a>
-                        </div>
+
+                    {/* Right Column (Form) */}
+                    <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-slate-100">
+                        <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); alert("Message sent successfully!"); }}>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Full Name</label>
+                                <input required type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm" placeholder="Your Name" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Email Address</label>
+                                <input required type="email" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm" placeholder="your@email.com" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Subject</label>
+                                <select required className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm">
+                                    <option value="">Select a subject...</option>
+                                    <option value="General Enquiry">General Enquiry</option>
+                                    <option value="Application Status">Application Status</option>
+                                    <option value="Verify a Letter">Verify a Letter</option>
+                                    <option value="Report Fraud">Report Fraud</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Message</label>
+                                <textarea required rows={4} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm" placeholder="How can we help you?"></textarea>
+                            </div>
+                            <label className="flex items-start gap-3 text-sm text-slate-600">
+                                <input required type="checkbox" className="mt-1 w-4 h-4 text-[#002366] rounded border-slate-300" />
+                                <span>I agree to the Privacy Policy.</span>
+                            </label>
+                            <button type="submit" className="w-full py-4 bg-[#002366] hover:bg-blue-900 text-white font-bold rounded-xl shadow-lg transition-all">
+                                Send Message
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

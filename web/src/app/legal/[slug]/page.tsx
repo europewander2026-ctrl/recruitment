@@ -49,6 +49,7 @@ export default async function LegalPage({ params }: { params: { slug: string } }
                     </div>
                 ) : (
                     <article className="prose prose-slate prose-lg max-w-none prose-headings:font-heading prose-headings:text-darkBlue prose-a:text-primary hover:prose-a:text-blue-700">
+                        <h1 className="text-3xl font-bold text-[#002366] mb-8">{page.title}</h1>
                         {/* Simple markdown to HTML rendering for basic usage without external parsers */}
                         <div dangerouslySetInnerHTML={{ __html: page.content.replace(/\n/g, '<br/>').replace(/^# (.*$)/gim, '<h1>$1</h1>').replace(/^## (.*$)/gim, '<h2>$1</h2>').replace(/^### (.*$)/gim, '<h3>$1</h3>').replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>') }} />
                     </article>
