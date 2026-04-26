@@ -45,6 +45,11 @@ export default function ApplicationsPage() {
   const [selectedApp, setSelectedApp] = useState<Applicant | null>(null);
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [filter, setFilter] = useState('All Applications');
+  const [generatedCode, setGeneratedCode] = useState<string | null>(null);
+
+  useEffect(() => {
+      setGeneratedCode(null);
+  }, [selectedApp]);
 
   // Notification State
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -110,9 +115,30 @@ export default function ApplicationsPage() {
           const data = await res.json();
           if (data.success) {
               setApplicants(prev => prev.map(a => a.id === selectedApp.id ? { ...a, status } : a));
-              setSelectedApp(null); // Deselect to refresh view or show it's gone
+              setSelectedApp({ ...selectedApp, status });
           }
       } catch (err) {
+          console.error(err);
+      }
+  };
+
+  const handleGenerateOffer = async () => {
+      if (!selectedApp) return;
+      try {
+          const res = await fetch('/api/documents/generate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  candidateName: selectedApp.name,
+                  candidateEmail: 'candidate@example.com', // fallback
+                  placementCountry: selectedApp.location || 'Unknown'
+              })
+          });
+          const data = await res.json();
+          if (data.success) {
+              setGeneratedCode(data.code);
+          }
+      } catch(err) {
           console.error(err);
       }
   };
@@ -378,13 +404,35 @@ export default function ApplicationsPage() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex gap-4 pt-4">
-                          <button onClick={() => handleUpdateStatus('shortlisted')} className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-lg shadow-green-200 transition-all text-sm uppercase tracking-wider">
-                              Approve & Shortlist
-                          </button>
-                          <button onClick={() => handleUpdateStatus('rejected')} className="flex-1 py-3 bg-white border border-red-200 text-red-500 hover:bg-red-50 font-bold rounded-lg transition-all text-sm uppercase tracking-wider">
-                              Reject
-                          </button>
+                      <div className="flex flex-col gap-4 pt-4">
+                          <div className="flex gap-4">
+                              {selectedApp.status !== 'APPROVED' ? (
+                                  <button onClick={() => handleUpdateStatus('APPROVED')} className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-lg shadow-green-200 transition-all text-sm uppercase tracking-wider">
+                                      Approve & Shortlist
+                                  </button>
+                              ) : (
+                                  <button onClick={() => handleUpdateStatus('RECEIVED')} className="flex-1 py-3 bg-slate-200 hover:bg-red-500 hover:text-white text-slate-600 font-bold rounded-lg transition-all text-sm uppercase tracking-wider">
+                                      Revoke Approval
+                                  </button>
+                              )}
+                              <button onClick={() => handleUpdateStatus('rejected')} className="flex-1 py-3 bg-white border border-red-200 text-red-500 hover:bg-red-50 font-bold rounded-lg transition-all text-sm uppercase tracking-wider">
+                                  Reject
+                              </button>
+                          </div>
+                          
+                          {selectedApp.status === 'APPROVED' && (
+                              <div className="mt-4 border-t border-slate-100 pt-4">
+                                  <button onClick={handleGenerateOffer} className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-all text-sm uppercase tracking-wider mb-2">
+                                      Generate Offer Letter
+                                  </button>
+                                  {generatedCode && (
+                                      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-center">
+                                          <p className="text-xs text-blue-600 uppercase font-bold mb-1">Generated Verification Code</p>
+                                          <p className="font-mono text-lg text-blue-900 font-bold tracking-widest">{generatedCode}</p>
+                                      </div>
+                                  )}
+                              </div>
+                          )}
                       </div>
 
                   </div>

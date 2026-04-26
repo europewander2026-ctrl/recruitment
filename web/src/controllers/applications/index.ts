@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import nodemailer from 'nodemailer';
 
 const prisma = new PrismaClient();
 
@@ -99,7 +100,9 @@ export async function POST(req: Request) {
           countryPreference: data.country
         },
         jobId: data.jobId || null,
-        status: 'pending',
+        status: 'RECEIVED',
+        resumeUrl: data.resumeUrl || null,
+        passportPhotoUrl: data.passportPhotoUrl || null,
       }
     });
 
@@ -111,6 +114,34 @@ export async function POST(req: Request) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: newApp.id })
     }).catch(err => console.error('Background AI scoring failed to start:', err));
+
+    // Setup Nodemailer Transporter
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.sendgrid.net',
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    // Send emails in background
+    if (data.email && process.env.SMTP_USER) {
+      transporter.sendMail({
+        from: '"Eurovanta Talent" <info@eurovantatalent.com>',
+        to: data.email,
+        subject: 'Application Received - Eurovanta Talent',
+        html: `<p>Dear ${data.fullName},</p><p>Thank you for applying to Eurovanta Talent. Your application for <strong>${roleStr}</strong> has been successfully received and is currently under review by our recruitment team.</p><p>We will contact you if your profile matches our requirements.</p><p>Best regards,<br>Eurovanta Talent Team</p>`
+      }).catch(err => console.error('Failed to send candidate email:', err));
+
+      transporter.sendMail({
+        from: '"Eurovanta System" <noreply@eurovantatalent.com>',
+        to: 'info@eurovantatalent.com',
+        subject: `New Application Received: ${data.fullName}`,
+        html: `<p><strong>New Application Received</strong></p><p>Candidate: ${data.fullName}</p><p>Role/Target: ${roleStr}</p><p>Email: ${data.email}</p><p>Location: ${data.residence}</p>`
+      }).catch(err => console.error('Failed to send admin email:', err));
+    }
 
     return NextResponse.json({ success: true, data: newApp });
   } catch (error) {

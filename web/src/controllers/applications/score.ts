@@ -37,17 +37,35 @@ export async function POST(req: NextRequest) {
       skills: application.skills
     };
 
+    let resumeText = '';
+    if (application.resumeUrl) {
+      try {
+        const res = await fetch(application.resumeUrl);
+        if (res.ok) {
+          const buffer = await res.arrayBuffer();
+          const pdf = require('pdf-parse');
+          const parsed = await pdf(Buffer.from(buffer));
+          resumeText = parsed.text;
+        }
+      } catch (err) {
+        console.error('Failed to parse PDF resume:', err);
+      }
+    }
+
     const systemPrompt = `
-      You are an expert HR recruitment AI. Your task is to evaluate a candidate's compatibility for a role based on their profile.
+      You are an expert HR recruitment AI. Your task is to evaluate a candidate's compatibility for a role based on their profile and resume.
       Weight the score based on the following criteria:
-      - Industry Experience: 40%
+      - Industry Experience & Resume alignment: 40%
       - Location/Visa suitability: 40%
       - General Qualifications (Education, overall profile completeness): 20%
       
       Candidate Profile:
       ${JSON.stringify(profile, null, 2)}
       
-      Output a strict JSON object with a 'score' (number between 0 and 100) and a 'reasoning' (a concise 1-sentence explanation of the score).
+      Candidate Resume (Extracted Text):
+      ${resumeText.substring(0, 3000) /* Limit to 3000 chars to avoid token limits */}
+      
+      Output a strict JSON object with a 'score' (number between 0 and 100) and a 'reasoning' (a concise 1-sentence explanation of the score based on their profile and actual resume contents).
     `;
 
     const { object } = await generateObject({

@@ -25,6 +25,7 @@ function ApplyForm() {
         passport: 'yes',
         passportExpiry: '',
         cv: null as File | null,
+        passportPhoto: null as File | null,
         gdpr1: false,
         gdpr2: false,
         gdpr3: false
@@ -45,6 +46,27 @@ function ApplyForm() {
         setIsSubmitting(true);
 
         try {
+            let resumeUrl = '';
+            let passportPhotoUrl = '';
+
+            if (formData.cv) {
+                const cvRes = await fetch(`/api/upload?filename=${encodeURIComponent(formData.cv.name)}`, {
+                    method: 'POST',
+                    body: formData.cv,
+                });
+                const cvBlob = await cvRes.json();
+                resumeUrl = cvBlob.url;
+            }
+
+            if (formData.passportPhoto) {
+                const photoRes = await fetch(`/api/upload?filename=${encodeURIComponent(formData.passportPhoto.name)}`, {
+                    method: 'POST',
+                    body: formData.passportPhoto,
+                });
+                const photoBlob = await photoRes.json();
+                passportPhotoUrl = photoBlob.url;
+            }
+
             const res = await fetch('/api/applications', {
                 method: 'POST',
                 headers: {
@@ -63,8 +85,9 @@ function ApplyForm() {
                     education: formData.education,
                     passport: formData.passport,
                     passportExpiry: formData.passportExpiry,
-                    jobId: jobId
-                    // CV upload skipped in JSON payload, typically sent via multipart/form-data or to S3
+                    jobId: jobId,
+                    resumeUrl,
+                    passportPhotoUrl
                 })
             });
 
@@ -129,7 +152,7 @@ function ApplyForm() {
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">Date of Birth *</label>
-                                <input required type="date" value={formData.dob} onChange={e=>setFormData({...formData, dob: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm" />
+                                <input required type="date" max={new Date().toISOString().split('T')[0]} value={formData.dob} onChange={e=>setFormData({...formData, dob: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm" />
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">Nationality *</label>
@@ -237,12 +260,16 @@ function ApplyForm() {
                             {formData.passport === 'yes' && (
                                 <div>
                                     <label className="block text-sm font-bold text-slate-700 mb-2">Passport Expiry Date *</label>
-                                    <input required type="date" value={formData.passportExpiry} onChange={e=>setFormData({...formData, passportExpiry: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm" />
+                                    <input required type="date" min={new Date().toISOString().split('T')[0]} value={formData.passportExpiry} onChange={e=>setFormData({...formData, passportExpiry: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm" />
                                 </div>
                             )}
-                            <div className="md:col-span-2">
+                            <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">Upload CV / Resume *</label>
                                 <input required type="file" onChange={e=>setFormData({...formData, cv: e.target.files ? e.target.files[0] : null})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[#002366] hover:file:bg-blue-100" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Passport Photo (Clear face, white background) *</label>
+                                <input required type="file" accept="image/*" onChange={e=>setFormData({...formData, passportPhoto: e.target.files ? e.target.files[0] : null})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[#002366] hover:file:bg-blue-100" />
                             </div>
                         </div>
 
