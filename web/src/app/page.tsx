@@ -90,7 +90,7 @@ export default function LandingPage() {
                             Eurovanta Talent connects skilled professionals with verified employers across Europe. From Poland to Latvia, we place real people in real jobs — with full documentation, legal support, and a transparent process from application to arrival.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-10">
-                            <Link href="#jobs" className="w-full sm:w-auto px-8 py-4 bg-brandNavy hover:bg-blue-900 text-white hover:text-brandGold font-bold rounded-full shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-1 transition-all">
+                            <Link href="/jobs" className="w-full sm:w-auto px-8 py-4 bg-brandNavy hover:bg-blue-900 text-white hover:text-brandGold font-bold rounded-full shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-1 transition-all">
                                 Browse Open Positions
                             </Link>
                             <Link href="/verify" className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 font-bold rounded-full border border-slate-200 hover:bg-slate-50 transition-colors">
