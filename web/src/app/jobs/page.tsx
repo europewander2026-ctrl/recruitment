@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Briefcase, MapPin, Building2, Banknote } from 'lucide-react';
+import { getCurrencySuffix, formatSalary } from '@/lib/currency';
 
 const prisma = new PrismaClient();
 
@@ -70,7 +71,7 @@ export default async function JobsPage() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {jobs.map((job) => (
-                            <div key={job.id} className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                            <div key={job.id} className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-blue-200 flex flex-col">
                                 <div className="mb-6 flex-1">
                                     <div className="flex justify-between items-start mb-4">
                                         <span className="px-3 py-1 bg-blue-50 text-[#002366] text-xs font-bold rounded-full uppercase tracking-wider">
@@ -95,16 +96,18 @@ export default async function JobsPage() {
                                         </li>
                                         {job.salary && (
                                             <li className="flex items-center gap-3 text-sm text-slate-600">
-                                                <Banknote size={16} className="text-slate-400" />
-                                                <span className="font-medium">{job.salary}</span>
+                                                <Banknote size={16} className="text-slate-400 shrink-0" />
+                                                <span className="font-medium">
+                                                    {formatSalary(job.salary, job.country, job.salaryPeriod)}
+                                                </span>
                                             </li>
                                         )}
                                     </ul>
                                 </div>
                                 
                                 <div className="pt-6 border-t border-slate-100 mt-auto">
-                                    <Link href={`/apply?jobId=${job.id}&title=${encodeURIComponent(job.title)}`} className="block w-full text-center py-3 bg-[#002366] hover:bg-blue-900 text-white font-bold rounded-xl shadow-sm transition-colors">
-                                        Apply Now
+                                    <Link href={`/jobs/${job.id}`} className="block w-full text-center py-3 bg-[#002366] hover:bg-blue-900 text-white font-bold rounded-xl shadow-sm transition-colors">
+                                        View Details
                                     </Link>
                                 </div>
                             </div>

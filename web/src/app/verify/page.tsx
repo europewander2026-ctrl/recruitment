@@ -5,41 +5,49 @@ import Link from 'next/link';
 
 export default function VerifyPage() {
   const [code, setCode] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [candidateName, setCandidateName] = useState('');
+  const [candidateEmail, setCandidateEmail] = useState('');
+  
+  const [status, setStatus] = useState<'idle' | 'loading' | 'verified' | 'not_found' | 'suspicious'>('idle');
   const [documentInfo, setDocumentInfo] = useState<any | null>(null);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setDocumentInfo(null);
-    setIsLoading(true);
+    setStatus('loading');
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/verify-code`, {
+      const res = await fetch(`/api/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code })
+        body: JSON.stringify({ verificationCode: code, candidateName, candidateEmail })
       });
 
       const data = await res.json();
 
       if (data.success) {
-        setDocumentInfo(data.document);
+        if (data.status === 'VERIFIED') {
+            setStatus('verified');
+            setDocumentInfo(data.document);
+        } else if (data.status === 'NOT_FOUND') {
+            setStatus('not_found');
+        } else if (data.status === 'SUSPICIOUS') {
+            setStatus('suspicious');
+        } else {
+            setStatus('not_found');
+        }
       } else {
-        setError(data.message || 'Verification failed.');
+        setStatus('not_found');
       }
     } catch (err) {
-      setError('A network error occurred. Please try again.');
-    } finally {
-      setIsLoading(false);
+      setStatus('not_found');
     }
   };
 
   const handlePayment = async (provider: 'nomadpay' | 'payoneer') => {
     if (!documentInfo?.id) return;
     
-    setIsLoading(true);
+    setStatus('loading');
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/checkout/${provider}`, {
         method: 'POST',
@@ -50,12 +58,10 @@ export default function VerifyPage() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setError(`Failed to initiate payment with ${provider}.`);
+        setStatus('not_found');
       }
     } catch (err) {
-      setError('An error occurred while connecting to payment gateway.');
-    } finally {
-      setIsLoading(false);
+      setStatus('not_found');
     }
   };
 
@@ -74,8 +80,38 @@ export default function VerifyPage() {
         </div>
 
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-2xl shadow-2xl">
-          {!documentInfo ? (
+          {status === 'idle' || status === 'loading' ? (
             <form onSubmit={handleVerify} className="space-y-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
+                  Full Name (as per Passport)
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  required
+                  value={candidateName}
+                  onChange={(e) => setCandidateName(e.target.value)}
+                  className="w-full bg-slate-800/50 border border-slate-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-500 transition-all"
+                  placeholder="e.g. John Doe"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  required
+                  value={candidateEmail}
+                  onChange={(e) => setCandidateEmail(e.target.value)}
+                  className="w-full bg-slate-800/50 border border-slate-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-500 transition-all"
+                  placeholder="john@example.com"
+                />
+              </div>
+
               <div>
                 <label htmlFor="code" className="block text-sm font-medium text-slate-300 mb-2">
                   Verification Code
@@ -87,28 +123,43 @@ export default function VerifyPage() {
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
                   className="w-full bg-slate-800/50 border border-slate-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-500 transition-all"
-                  placeholder="e.g. DOC-1234-ABCD"
+                  placeholder="e.g. EVT-TEST-2026"
                 />
               </div>
 
-              {error && (
-                <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-3 rounded-lg text-sm">
-                  {error}
-                </div>
-              )}
-
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={status === 'loading'}
                 className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? (
+                {status === 'loading' ? (
                   <span className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
                 ) : (
                   'Verify Document'
                 )}
               </button>
             </form>
+          ) : status === 'not_found' ? (
+            <div className="text-center py-6 space-y-6">
+              <div className="w-16 h-16 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/30 text-3xl font-bold">
+                ✕
+              </div>
+              <h2 className="text-xl font-semibold text-white mb-1">Document Not Found</h2>
+              <p className="text-slate-400 text-sm">We could not verify this document. The details provided do not match any official records in our system.</p>
+              <button onClick={() => setStatus('idle')} className="mt-4 px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors border border-slate-700">Try Again</button>
+            </div>
+          ) : status === 'suspicious' ? (
+            <div className="text-center py-6 space-y-6">
+              <div className="w-16 h-16 bg-amber-500/20 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-500/30 text-3xl font-bold">
+                ⚠️
+              </div>
+              <h2 className="text-xl font-semibold text-white mb-1">Suspicious Document</h2>
+              <div className="bg-amber-500/10 border border-amber-500/30 p-4 rounded-lg text-left">
+                  <p className="text-amber-400 text-sm font-medium">This code corresponds to a placement program in Hungary or Croatia.</p>
+                  <p className="text-slate-300 text-sm mt-2">Be advised: Eurovanta Talent's placement programs for Hungary and Croatia are <strong>permanently closed</strong>. We are not issuing any active offer letters for these regions. If you received this letter recently from someone claiming to be an agent, it is likely fraudulent.</p>
+              </div>
+              <button onClick={() => setStatus('idle')} className="mt-4 px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors border border-slate-700">Verify Another Code</button>
+            </div>
           ) : (
             <div className="space-y-6">
               <div className="text-center">
@@ -127,64 +178,37 @@ export default function VerifyPage() {
                   <span className="text-white font-medium">{documentInfo.candidateName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Role</span>
-                  <span className="text-white font-medium">{documentInfo.candidateRole}</span>
+                  <span className="text-slate-400">Role/Placement</span>
+                  <span className="text-white font-medium">{documentInfo.placementCountry}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400">Document Type</span>
-                  <span className="text-white font-medium">{documentInfo.documentType}</span>
+                  <span className="text-white font-medium">Official Offer Letter</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Status</span>
-                  {documentInfo.isPaid ? (
-                    <span className="text-green-400 font-medium bg-green-400/10 px-2 py-0.5 rounded">Unlocked</span>
-                  ) : (
-                    <span className="text-amber-400 font-medium bg-amber-400/10 px-2 py-0.5 rounded">Payment Required</span>
-                  )}
+                  <span className="text-slate-400">Document Status</span>
+                  <span className="text-green-400 font-medium bg-green-400/10 px-2 py-0.5 rounded">{documentInfo.status}</span>
                 </div>
               </div>
 
               <div className="pt-2">
-                {documentInfo.isPaid ? (
-                  <Link 
-                    href={`/api/download-document?id=${documentInfo.id}`}
-                    target="_blank"
-                    className="w-full bg-green-600 hover:bg-green-500 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={() => alert("Payment Gateway Mock Triggered")}
+                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
                   >
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                     </svg>
-                    Download Secure PDF
-                  </Link>
-                ) : (
-                  <div className="flex flex-col gap-3">
-                    <button
-                      onClick={() => handlePayment('nomadpay')}
-                      disabled={isLoading}
-                      className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                      </svg>
-                      Pay with Nomadpay
-                    </button>
-                    <button
-                      onClick={() => handlePayment('payoneer')}
-                      disabled={isLoading}
-                      className="w-full bg-orange-600 hover:bg-orange-500 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      Pay with Payoneer
-                    </button>
-                  </div>
-                )}
+                    Pay & Download My Letter — €25
+                  </button>
+                </div>
                 
                 <button
                   onClick={() => {
                     setDocumentInfo(null);
                     setCode('');
+                    setStatus('idle');
                   }}
                   className="w-full mt-3 bg-transparent hover:bg-white/5 text-slate-300 font-medium py-3 px-4 rounded-lg transition-colors"
                 >

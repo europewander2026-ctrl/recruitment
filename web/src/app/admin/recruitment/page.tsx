@@ -20,13 +20,15 @@ import {
   useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Bell } from 'lucide-react';
+import { Bell, Pencil } from 'lucide-react';
+import { getCurrencySuffix, formatSalary } from '@/lib/currency';
 
 interface Job {
   id: string;
   title: string;
   country: string;
   salary: string;
+  salaryPeriod?: string;
   category: string;
   description?: string;
   responsibilities?: string;
@@ -282,6 +284,20 @@ export default function RecruitmentOpsPage() {
       }
   };
 
+  const generateTestLetter = async () => {
+    try {
+      const res = await fetch('/api/test/generate-letter', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message);
+      } else {
+        alert('Failed: ' + data.message);
+      }
+    } catch (e) {
+      alert('Error generating letter.');
+    }
+  };
+
   const filteredJobs = jobFilter === 'all' ? jobs : jobs.filter(j => j.country?.toLowerCase() === jobFilter.toLowerCase());
 
   const openModal = (id?: string) => {
@@ -293,6 +309,7 @@ export default function RecruitmentOpsPage() {
             title: '', 
             country: countries.length > 0 ? countries[0].name : '', 
             salary: '', 
+            salaryPeriod: 'month',
             category: categories.length > 0 ? categories[0].name : '', 
             responsibilities: '', 
             status: true 
@@ -386,6 +403,9 @@ export default function RecruitmentOpsPage() {
                       )}
                   </div>
                   
+                  <button onClick={generateTestLetter} className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all flex items-center gap-2">
+                      <i className="fa-solid fa-file-invoice"></i> Gen Mock
+                  </button>
                   <button onClick={() => openModal()} className="bg-primary hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2">
                       <i className="fa-solid fa-plus"></i> Add New Position
                   </button>
@@ -491,10 +511,12 @@ export default function RecruitmentOpsPage() {
                                       {job.status ? <span className="text-[0.6rem] bg-green-50 text-green-600 px-1 rounded border border-green-100">● Active</span> : <span className="text-[0.6rem] bg-slate-100 text-slate-500 px-1 rounded border border-slate-200">Paused</span>}
                                   </div>
                                   <h4 className="font-bold text-sm text-darkBlue group-hover:text-primary transition-colors">{job.title}</h4>
-                                  <p className="text-xs text-slate-400 mt-1">{job.category} • {job.salary}</p>
+                                  <p className="text-xs text-slate-400 mt-1">
+                                      {job.category} • {formatSalary(job.salary, job.country, job.salaryPeriod)}
+                                  </p>
                               </div>
                               <button onClick={() => openModal(job.id)} className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 hover:bg-primary hover:text-white flex items-center justify-center transition-colors">
-                                  <i className="fa-solid fa-pen-to-square"></i>
+                                  <Pencil size={14} />
                               </button>
                           </div>
                       ))}
@@ -537,7 +559,28 @@ export default function RecruitmentOpsPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                           <div>
                               <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Salary</label>
-                              <input value={modalForm.salary} onChange={e=>setModalForm({...modalForm, salary: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 focus:outline-none focus:border-primary text-sm" />
+                              <div className="flex bg-slate-50 border border-slate-200 rounded-lg focus-within:border-primary overflow-hidden">
+                                  <input 
+                                    value={modalForm.salary} 
+                                    onChange={e => {
+                                        const val = e.target.value.replace(/[^0-9-]/g, '');
+                                        setModalForm({...modalForm, salary: val});
+                                    }} 
+                                    className="w-full bg-transparent px-4 py-2 focus:outline-none text-sm" 
+                                    placeholder="e.g. 1300-1500"
+                                  />
+                                  <span className="flex items-center px-3 text-xs font-bold text-slate-400 border-l border-slate-200 whitespace-nowrap">
+                                      {getCurrencySuffix(modalForm.country as string)}
+                                  </span>
+                                  <select
+                                    value={modalForm.salaryPeriod || 'month'}
+                                    onChange={e => setModalForm({...modalForm, salaryPeriod: e.target.value})}
+                                    className="bg-slate-100 px-3 py-2 text-xs font-bold text-slate-600 focus:outline-none border-l border-slate-200 appearance-none"
+                                  >
+                                      <option value="month">/ month</option>
+                                      <option value="year">/ year</option>
+                                  </select>
+                              </div>
                           </div>
                           <div>
                               <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Category</label>

@@ -57,6 +57,7 @@ model Job {
   title            String
   country          String
   salary           String?
+  salaryPeriod     String   @default("month")
   category         String
   status           String   @default("active")
   responsibilities String?
@@ -124,4 +125,15 @@ model JobCountry {
   name      String   @unique
   region    String?
   isActive  Boolean  @default(true)
+}
+
+model OfferLetter {
+  id               String   @id @default(uuid())
+  verificationCode String   @unique
+  candidateName    String
+  candidateEmail   String
+  placementCountry String
+  status           String   @default("ISSUED")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
