@@ -9,9 +9,10 @@ const prisma = new PrismaClient();
 
 export const dynamic = 'force-dynamic';
 
-export default async function JobDetailsPage({ params }: { params: { id: string } }) {
+export default async function JobDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const resolvedParams = await params;
     const job = await prisma.job.findUnique({
-        where: { id: params.id }
+        where: { id: resolvedParams.id }
     });
 
     if (!job || job.status !== 'active') {
@@ -112,7 +113,7 @@ export default async function JobDetailsPage({ params }: { params: { id: string 
                                 <h4 className="font-bold text-lg text-slate-800 mb-2">Ready to start your journey?</h4>
                                 <p className="text-slate-500 text-sm mb-6 max-w-md mx-auto">Submit your application securely. Our recruitment team will review your profile and contact you if you're a match.</p>
                                 <Link 
-                                    href={`/apply?jobId=${job.id}&title=${encodeURIComponent(job.title)}`}
+                                    href={`/apply?jobId=${job.id}&title=${encodeURIComponent(job.title || '')}`}
                                     className="inline-block px-10 py-4 bg-[#002366] hover:bg-blue-900 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all w-full sm:w-auto"
                                 >
                                     Apply for this Position
