@@ -45,6 +45,8 @@ model Application {
   timeline  Json?    // Array of timeline objects
   aiMatchScore Int?
   aiReasoning  String?
+  jobId        String?
+  job          Job?       @relation(fields: [jobId], references: [id], onDelete: SetNull)
   documents Document[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -58,6 +60,7 @@ model Job {
   category         String
   status           String   @default("active")
   responsibilities String?
+  applications     Application[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }

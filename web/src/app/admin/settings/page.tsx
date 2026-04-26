@@ -3,7 +3,7 @@ import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
-import { Bell } from 'lucide-react';
+import { Bell, Pencil, Trash2, Check, X } from 'lucide-react';
 
 interface Notification {
     id: string;
@@ -46,6 +46,12 @@ export default function SettingsPage() {
   const [newCountryName, setNewCountryName] = useState('');
   const [newCountryRegion, setNewCountryRegion] = useState('');
   const [taxMsg, setTaxMsg] = useState('');
+  const [editingCatId, setEditingCatId] = useState<string|null>(null);
+  const [editCatName, setEditCatName] = useState('');
+  const [editingCountryId, setEditingCountryId] = useState<string|null>(null);
+  const [editCountryName, setEditCountryName] = useState('');
+  const [editCountryRegion, setEditCountryRegion] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Notification State
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -153,14 +159,57 @@ export default function SettingsPage() {
 
   const handleDeleteTaxonomy = async (type: 'category' | 'country', id: string) => {
       if (!confirm(`Are you sure you want to delete this ${type}?`)) return;
+      setIsUpdating(true);
       try {
           const res = await fetch(`/api/taxonomies?type=${type}&id=${id}`, { method: 'DELETE' });
           if (res.ok) {
               if (type === 'category') setCategories(categories.filter(c => c.id !== id));
               if (type === 'country') setCountries(countries.filter(c => c.id !== id));
+              setTaxMsg("Deleted successfully.");
+          } else {
+              setTaxMsg("Failed to delete.");
           }
       } catch (err) {
           console.error(err);
+          setTaxMsg("Error occurred during deletion.");
+      } finally {
+          setIsUpdating(false);
+          setTimeout(() => setTaxMsg(''), 3000);
+      }
+  };
+
+  const handleUpdateTaxonomy = async (type: 'category' | 'country', id: string) => {
+      setIsUpdating(true);
+      try {
+          const payload = type === 'category' 
+              ? { id, type, name: editCatName }
+              : { id, type, name: editCountryName, region: editCountryRegion };
+              
+          const res = await fetch(`/api/taxonomies`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+          });
+          
+          if (res.ok) {
+              const data = await res.json();
+              if (type === 'category') {
+                  setCategories(categories.map(c => c.id === id ? data.data : c));
+                  setEditingCatId(null);
+              } else {
+                  setCountries(countries.map(c => c.id === id ? data.data : c));
+                  setEditingCountryId(null);
+              }
+              setTaxMsg("Update successful.");
+          } else {
+              setTaxMsg("Failed to update.");
+          }
+      } catch (err) {
+          console.error(err);
+          setTaxMsg("Error occurred during update.");
+      } finally {
+          setIsUpdating(false);
+          setTimeout(() => setTaxMsg(''), 3000);
       }
   };
 
@@ -255,7 +304,7 @@ export default function SettingsPage() {
               <div className="max-w-4xl mx-auto">
                   
                   {/* Settings Nav Tabs */}
-                  <div className="flex gap-4 mb-8 border-b border-slate-200">
+                  <div className="flex gap-4 mb-8 border-b border-slate-200 overflow-x-auto whitespace-nowrap scrollbar-hide pb-2">
                       <button 
                           onClick={() => setActiveTab('profile')} 
                           className={`pb-4 px-4 font-bold text-sm transition-colors border-b-2 ${activeTab === 'profile' ? 'border-primary text-primary' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
@@ -491,10 +540,40 @@ export default function SettingsPage() {
                                           {categories.length === 0 && <li className="text-xs text-slate-400">No categories found.</li>}
                                           {categories.map(cat => (
                                               <li key={cat.id} className="bg-white border border-slate-200 rounded-lg p-3 flex justify-between items-center shadow-sm">
-                                                  <span className="text-sm font-medium text-slate-800">{cat.name}</span>
-                                                  <button onClick={() => handleDeleteTaxonomy('category', cat.id)} className="text-red-400 hover:text-red-600 transition-colors" title="Delete">
-                                                      <i className="fa-solid fa-trash text-xs"></i>
-                                                  </button>
+                                                  {editingCatId === cat.id ? (
+                                                      <div className="flex flex-1 items-center gap-2 mr-2">
+                                                          <input 
+                                                              type="text" 
+                                                              value={editCatName} 
+                                                              onChange={e => setEditCatName(e.target.value)} 
+                                                              className="flex-1 border border-slate-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-primary"
+                                                          />
+                                                      </div>
+                                                  ) : (
+                                                      <span className="text-sm font-medium text-slate-800">{cat.name}</span>
+                                                  )}
+                                                  
+                                                  <div className="flex items-center gap-3">
+                                                      {editingCatId === cat.id ? (
+                                                          <>
+                                                              <button onClick={() => handleUpdateTaxonomy('category', cat.id)} disabled={isUpdating} className="text-green-500 hover:text-green-700 transition-colors" title="Save">
+                                                                  <Check size={16} />
+                                                              </button>
+                                                              <button onClick={() => setEditingCatId(null)} disabled={isUpdating} className="text-slate-400 hover:text-slate-600 transition-colors" title="Cancel">
+                                                                  <X size={16} />
+                                                              </button>
+                                                          </>
+                                                      ) : (
+                                                          <>
+                                                              <button onClick={() => { setEditingCatId(cat.id); setEditCatName(cat.name); }} disabled={isUpdating} className="text-slate-400 hover:text-primary transition-colors" title="Edit">
+                                                                  <Pencil size={14} />
+                                                              </button>
+                                                              <button onClick={() => handleDeleteTaxonomy('category', cat.id)} disabled={isUpdating} className="text-red-400 hover:text-red-600 transition-colors" title="Delete">
+                                                                  <Trash2 size={14} />
+                                                              </button>
+                                                          </>
+                                                      )}
+                                                  </div>
                                               </li>
                                           ))}
                                       </ul>
@@ -527,13 +606,51 @@ export default function SettingsPage() {
                                           {countries.length === 0 && <li className="text-xs text-slate-400">No countries found.</li>}
                                           {countries.map(country => (
                                               <li key={country.id} className="bg-white border border-slate-200 rounded-lg p-3 flex justify-between items-center shadow-sm">
-                                                  <div>
-                                                      <span className="text-sm font-medium text-slate-800 block">{country.name}</span>
-                                                      {country.region && <span className="text-xs text-slate-400">Region: {country.region}</span>}
+                                                  {editingCountryId === country.id ? (
+                                                      <div className="flex flex-1 items-center gap-2 mr-2">
+                                                          <input 
+                                                              type="text" 
+                                                              value={editCountryName} 
+                                                              onChange={e => setEditCountryName(e.target.value)} 
+                                                              className="flex-1 border border-slate-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-primary"
+                                                              placeholder="Name"
+                                                          />
+                                                          <input 
+                                                              type="text" 
+                                                              value={editCountryRegion} 
+                                                              onChange={e => setEditCountryRegion(e.target.value)} 
+                                                              className="w-20 border border-slate-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-primary"
+                                                              placeholder="Region"
+                                                          />
+                                                      </div>
+                                                  ) : (
+                                                      <div>
+                                                          <span className="text-sm font-medium text-slate-800 block">{country.name}</span>
+                                                          {country.region && <span className="text-xs text-slate-400">Region: {country.region}</span>}
+                                                      </div>
+                                                  )}
+
+                                                  <div className="flex items-center gap-3">
+                                                      {editingCountryId === country.id ? (
+                                                          <>
+                                                              <button onClick={() => handleUpdateTaxonomy('country', country.id)} disabled={isUpdating} className="text-green-500 hover:text-green-700 transition-colors" title="Save">
+                                                                  <Check size={16} />
+                                                              </button>
+                                                              <button onClick={() => setEditingCountryId(null)} disabled={isUpdating} className="text-slate-400 hover:text-slate-600 transition-colors" title="Cancel">
+                                                                  <X size={16} />
+                                                              </button>
+                                                          </>
+                                                      ) : (
+                                                          <>
+                                                              <button onClick={() => { setEditingCountryId(country.id); setEditCountryName(country.name); setEditCountryRegion(country.region || ''); }} disabled={isUpdating} className="text-slate-400 hover:text-primary transition-colors" title="Edit">
+                                                                  <Pencil size={14} />
+                                                              </button>
+                                                              <button onClick={() => handleDeleteTaxonomy('country', country.id)} disabled={isUpdating} className="text-red-400 hover:text-red-600 transition-colors" title="Delete">
+                                                                  <Trash2 size={14} />
+                                                              </button>
+                                                          </>
+                                                      )}
                                                   </div>
-                                                  <button onClick={() => handleDeleteTaxonomy('country', country.id)} className="text-red-400 hover:text-red-600 transition-colors" title="Delete">
-                                                      <i className="fa-solid fa-trash text-xs"></i>
-                                                  </button>
                                               </li>
                                           ))}
                                       </ul>

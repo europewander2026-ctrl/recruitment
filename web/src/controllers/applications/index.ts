@@ -98,6 +98,7 @@ export async function POST(req: Request) {
           passportExpiry: data.passportExpiry,
           countryPreference: data.country
         },
+        jobId: data.jobId || null,
         status: 'pending',
       }
     });

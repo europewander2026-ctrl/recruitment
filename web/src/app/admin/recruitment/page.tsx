@@ -282,7 +282,7 @@ export default function RecruitmentOpsPage() {
       }
   };
 
-  const filteredJobs = jobFilter === 'all' ? jobs : jobs.filter(j => j.country === jobFilter);
+  const filteredJobs = jobFilter === 'all' ? jobs : jobs.filter(j => j.country?.toLowerCase() === jobFilter.toLowerCase());
 
   const openModal = (id?: string) => {
       if (id) {
@@ -431,12 +431,12 @@ export default function RecruitmentOpsPage() {
                       </div>
 
                       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          <div className="flex overflow-x-auto snap-x snap-mandatory pb-4 gap-6 scrollbar-hide">
                               {/* Columns Mapping */}
                               {['received', 'reviewing', 'shortlisted'].map(colId => {
                                   const colApps = apps.filter(a => a.status === colId);
                                   return (
-                                      <div key={colId} className="bg-slate-100 rounded-2xl p-4 min-h-[400px] flex flex-col">
+                                      <div key={colId} className="bg-slate-100 rounded-2xl p-4 min-h-[400px] flex flex-col min-w-[300px] snap-center shrink-0 w-full md:w-auto md:flex-1">
                                           <h4 className="text-xs font-bold text-slate-500 uppercase mb-4 flex justify-between">
                                               {colId}
                                               <span className="bg-white border border-slate-200 text-slate-600 px-2 rounded-full shadow-sm">{colApps.length}</span>
@@ -468,7 +468,7 @@ export default function RecruitmentOpsPage() {
                   </div>
 
                   <div className="flex gap-2 overflow-x-auto pb-4 mb-2 scrollbar-hide">
-                      {['all', 'portugal', 'denmark', 'germany', 'norway', 'hungary', 'uae'].map(country => (
+                      {['all', ...countries.map(c => c.name)].map(country => (
                           <button 
                             key={country}
                             onClick={() => setJobFilter(country)}
@@ -506,13 +506,13 @@ export default function RecruitmentOpsPage() {
       {/* Simplified React Modal for Positions */}
       {isModalOpen && (
           <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center animate-in fade-in">
-              <div className="bg-white w-[95%] max-w-[600px] rounded-2xl p-8 shadow-[0_25px_50px_rgba(0,0,0,0.25)] animate-in zoom-in-95">
+              <div className="bg-white w-[95%] md:max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 md:p-8 shadow-[0_25px_50px_rgba(0,0,0,0.25)] animate-in zoom-in-95">
                   <div className="flex justify-between items-center mb-6">
                       <h3 className="font-heading font-bold text-xl text-darkBlue">{modalForm.id ? 'Edit Position' : 'Add New Position'}</h3>
                       <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-red-500"><i className="fa-solid fa-xmark text-xl"></i></button>
                   </div>
                   <form onSubmit={e => { e.preventDefault(); saveJob(); }}>
-                      <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                           <div>
                               <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Job Title *</label>
                               <input required value={modalForm.title} onChange={e=>setModalForm({...modalForm, title: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 focus:outline-none focus:border-primary text-sm" />
@@ -534,7 +534,7 @@ export default function RecruitmentOpsPage() {
                           </div>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                           <div>
                               <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Salary</label>
                               <input value={modalForm.salary} onChange={e=>setModalForm({...modalForm, salary: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 focus:outline-none focus:border-primary text-sm" />
@@ -570,12 +570,12 @@ export default function RecruitmentOpsPage() {
                           </label>
                       </div>
 
-                      <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                      <div className="flex flex-col-reverse md:flex-row justify-end gap-3 pt-4 border-t border-slate-100">
                           {modalForm.id && (
-                              <button type="button" onClick={() => deleteJob(modalForm.id as string)} className="px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 rounded-lg border border-red-200 mr-auto">Delete</button>
+                              <button type="button" onClick={() => deleteJob(modalForm.id as string)} className="w-full md:w-auto px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 rounded-lg border border-red-200 mr-auto mt-2 md:mt-0">Delete</button>
                           )}
-                          <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50 rounded-lg border border-slate-300">Cancel</button>
-                          <button type="submit" className="px-6 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-700 rounded-lg shadow-lg">Save Changes</button>
+                          <button type="button" onClick={() => setIsModalOpen(false)} className="w-full md:w-auto px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50 rounded-lg border border-slate-300">Cancel</button>
+                          <button type="submit" className="w-full md:w-auto px-6 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-700 rounded-lg shadow-lg">Save Changes</button>
                       </div>
                   </form>
               </div>

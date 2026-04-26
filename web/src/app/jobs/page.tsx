@@ -103,7 +103,7 @@ export default async function JobsPage() {
                                 </div>
                                 
                                 <div className="pt-6 border-t border-slate-100 mt-auto">
-                                    <Link href="/apply" className="block w-full text-center py-3 bg-[#002366] hover:bg-blue-900 text-white font-bold rounded-xl shadow-sm transition-colors">
+                                    <Link href={`/apply?jobId=${job.id}&title=${encodeURIComponent(job.title)}`} className="block w-full text-center py-3 bg-[#002366] hover:bg-blue-900 text-white font-bold rounded-xl shadow-sm transition-colors">
                                         Apply Now
                                     </Link>
                                 </div>

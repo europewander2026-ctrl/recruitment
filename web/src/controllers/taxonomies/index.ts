@@ -57,6 +57,36 @@ export async function POST(req: NextRequest) {
     }
 }
 
+export async function PUT(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const { id, type, name, region } = body;
+
+        if (!id || !type || !name) {
+            return NextResponse.json({ success: false, error: 'ID, type, and name are required' }, { status: 400 });
+        }
+
+        if (type === 'category') {
+            const updatedCategory = await prisma.jobCategory.update({
+                where: { id },
+                data: { name }
+            });
+            return NextResponse.json({ success: true, data: updatedCategory });
+        } else if (type === 'country') {
+            const updatedCountry = await prisma.jobCountry.update({
+                where: { id },
+                data: { name, region: region || null }
+            });
+            return NextResponse.json({ success: true, data: updatedCountry });
+        } else {
+            return NextResponse.json({ success: false, error: 'Invalid type parameter' }, { status: 400 });
+        }
+    } catch (error) {
+        console.error('Error updating taxonomy:', error);
+        return NextResponse.json({ success: false, error: 'Failed to update taxonomy' }, { status: 500 });
+    }
+}
+
 export async function DELETE(req: NextRequest) {
     try {
         const type = req.nextUrl.searchParams.get('type');

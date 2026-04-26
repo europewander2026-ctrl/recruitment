@@ -1,11 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { ShieldCheck, CheckCircle2 } from 'lucide-react';
 
-export default function ApplyPage() {
+function ApplyForm() {
+    const searchParams = useSearchParams();
+    const jobId = searchParams.get('jobId');
+    const jobTitle = searchParams.get('title');
+
     const [formData, setFormData] = useState({
         fullName: '',
         dob: '',
@@ -57,7 +62,8 @@ export default function ApplyPage() {
                     experience: formData.experience,
                     education: formData.education,
                     passport: formData.passport,
-                    passportExpiry: formData.passportExpiry
+                    passportExpiry: formData.passportExpiry,
+                    jobId: jobId
                     // CV upload skipped in JSON payload, typically sent via multipart/form-data or to S3
                 })
             });
@@ -100,18 +106,20 @@ export default function ApplyPage() {
             <Head><title>Apply Now | Eurovanta Talent</title></Head>
             
             <div className="max-w-3xl mx-auto">
-                <div className="mb-10 text-center">
-                    <h1 className="text-4xl font-bold text-[#002366] mb-4">Official Application Portal</h1>
-                    <p className="text-slate-500">Please fill out all required fields securely to submit your profile for review.</p>
+                <div className="max-w-4xl mx-auto mb-12 text-center">
+                    <h1 className="text-4xl md:text-5xl font-bold text-[#002366] mb-4 font-heading">Application Form</h1>
+                    <p className="text-slate-600 text-lg">
+                        Submit your details below. Fields marked with an asterisk (*) are required.
+                    </p>
+                    {jobTitle && (
+                        <div className="mt-6 inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-800 px-6 py-3 rounded-full shadow-sm text-sm font-bold">
+                            <ShieldCheck size={20} className="text-blue-500" /> Applying for: {jobTitle}
+                        </div>
+                    )}
                 </div>
 
-                <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 md:p-12">
-                    <div className="flex items-center gap-3 mb-8 pb-6 border-b border-slate-100 text-[#002366]">
-                        <ShieldCheck size={24} />
-                        <h2 className="font-bold text-xl">SECTION 4 — APPLICATION FORM</h2>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-200 max-w-4xl mx-auto relative overflow-hidden">
+                    <form onSubmit={handleSubmit} className="space-y-12">
                         
                         {/* Personal Information */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -141,39 +149,66 @@ export default function ApplyPage() {
                             </div>
                         </div>
 
-                        <hr className="border-slate-100" />
+                        {!jobId && (
+                            <div className="border-t border-slate-100 pt-10">
+                                <h2 className="text-xl font-bold text-[#002366] mb-6 flex items-center gap-3">
+                                    <span className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm">3</span>
+                                    Placement Preferences
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">Preferred Country of Placement *</label>
+                                        <select 
+                                            required 
+                                            value={formData.country} 
+                                            onChange={e => setFormData({...formData, country: e.target.value})}
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm appearance-none"
+                                        >
+                                            <option value="" disabled>Select a country</option>
+                                            <optgroup label="Active European Placements">
+                                                <option value="Poland">Poland</option>
+                                                <option value="Czech Republic">Czech Republic</option>
+                                                <option value="Serbia">Serbia</option>
+                                                <option value="Lithuania">Lithuania</option>
+                                                <option value="Latvia">Latvia</option>
+                                            </optgroup>
+                                            <optgroup label="Middle East Placements">
+                                                <option value="United Arab Emirates (UAE)">United Arab Emirates (UAE)</option>
+                                                <option value="Saudi Arabia">Saudi Arabia</option>
+                                                <option value="Qatar">Qatar</option>
+                                                <option value="Oman">Oman</option>
+                                                <option value="Bahrain">Bahrain</option>
+                                                <option value="Kuwait">Kuwait</option>
+                                            </optgroup>
+                                            <optgroup label="Closed Programs">
+                                                <option value="Hungary (Closed 2024)" disabled>Hungary (Closed 2024)</option>
+                                                <option value="Croatia (Closed 2025)" disabled>Croatia (Closed 2025)</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">Primary Industry *</label>
+                                        <select 
+                                            required 
+                                            value={formData.industry} 
+                                            onChange={e => setFormData({...formData, industry: e.target.value})}
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm appearance-none"
+                                        >
+                                            <option value="" disabled>Select industry</option>
+                                            <option>Logistics & Warehousing</option>
+                                            <option>Construction & Engineering</option>
+                                            <option>Manufacturing</option>
+                                            <option>Hospitality</option>
+                                            <option>Agriculture</option>
+                                            <option>Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Professional Information */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-2">Preferred Country *</label>
-                                <select required value={formData.country} onChange={e=>setFormData({...formData, country: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm">
-                                    <option value="">Select a country</option>
-                                    <optgroup label="Active European Placements">
-                                        <option value="Poland">Poland</option>
-                                        <option value="Czech Republic">Czech Republic</option>
-                                        <option value="Serbia">Serbia</option>
-                                        <option value="Lithuania">Lithuania</option>
-                                        <option value="Latvia">Latvia</option>
-                                    </optgroup>
-                                    <optgroup label="Middle East Placements">
-                                        <option value="UAE">United Arab Emirates (UAE)</option>
-                                        <option value="Saudi Arabia">Saudi Arabia</option>
-                                        <option value="Qatar">Qatar</option>
-                                        <option value="Oman">Oman</option>
-                                        <option value="Bahrain">Bahrain</option>
-                                        <option value="Kuwait">Kuwait</option>
-                                    </optgroup>
-                                    <optgroup label="Closed Programs">
-                                        <option value="Hungary" disabled>Hungary (Closed 2024)</option>
-                                        <option value="Croatia" disabled>Croatia (Closed 2025)</option>
-                                    </optgroup>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-2">Industry *</label>
-                                <input required type="text" value={formData.industry} onChange={e=>setFormData({...formData, industry: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm" placeholder="e.g. Manufacturing, Logistics" />
-                            </div>
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">Years of Experience *</label>
                                 <input required type="text" value={formData.experience} onChange={e=>setFormData({...formData, experience: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm" placeholder="e.g. 5 Years" />
@@ -245,5 +280,13 @@ export default function ApplyPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function ApplyPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center">Loading...</div>}>
+            <ApplyForm />
+        </Suspense>
     );
 }
