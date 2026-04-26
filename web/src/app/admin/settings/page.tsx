@@ -13,7 +13,7 @@ interface Notification {
 }
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<'profile' | 'platform' | 'cms' | 'homepage'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'platform' | 'cms' | 'homepage' | 'taxonomies'>('profile');
   
   // Profile State
   const [email, setEmail] = useState('');
@@ -38,6 +38,14 @@ export default function SettingsPage() {
       home_fraud_warning: ''
   });
   const [homeMsg, setHomeMsg] = useState('');
+
+  // Taxonomy State
+  const [categories, setCategories] = useState<{id: string, name: string, isActive: boolean}[]>([]);
+  const [countries, setCountries] = useState<{id: string, name: string, region: string | null, isActive: boolean}[]>([]);
+  const [newCatName, setNewCatName] = useState('');
+  const [newCountryName, setNewCountryName] = useState('');
+  const [newCountryRegion, setNewCountryRegion] = useState('');
+  const [taxMsg, setTaxMsg] = useState('');
 
   // Notification State
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -70,6 +78,9 @@ export default function SettingsPage() {
                 }
             })
             .catch(err => console.error("Error fetching home config:", err));
+     } else if (activeTab === 'taxonomies') {
+         fetch('/api/taxonomies?type=category').then(r => r.json()).then(d => { if(d.success) setCategories(d.data) });
+         fetch('/api/taxonomies?type=country').then(r => r.json()).then(d => { if(d.success) setCountries(d.data) });
      }
   }, [activeTab, cmsSlug]);
 
@@ -105,6 +116,52 @@ export default function SettingsPage() {
           setHomeMsg("Operation failed.");
       }
       setTimeout(() => setHomeMsg(''), 3000);
+  };
+
+  const handleAddTaxonomy = async (type: 'category' | 'country', e: React.FormEvent) => {
+      e.preventDefault();
+      setTaxMsg("Saving...");
+      const payload = type === 'category' 
+          ? { type: 'category', name: newCatName }
+          : { type: 'country', name: newCountryName, region: newCountryRegion };
+
+      try {
+          const res = await fetch('/api/taxonomies', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (data.success) {
+              setTaxMsg(`${type} added successfully!`);
+              if (type === 'category') {
+                  setCategories([...categories, data.data]);
+                  setNewCatName('');
+              } else {
+                  setCountries([...countries, data.data]);
+                  setNewCountryName('');
+                  setNewCountryRegion('');
+              }
+          } else {
+              setTaxMsg(data.error || "Error saving taxonomy.");
+          }
+      } catch (err) {
+          setTaxMsg("Operation failed.");
+      }
+      setTimeout(() => setTaxMsg(''), 3000);
+  };
+
+  const handleDeleteTaxonomy = async (type: 'category' | 'country', id: string) => {
+      if (!confirm(`Are you sure you want to delete this ${type}?`)) return;
+      try {
+          const res = await fetch(`/api/taxonomies?type=${type}&id=${id}`, { method: 'DELETE' });
+          if (res.ok) {
+              if (type === 'category') setCategories(categories.filter(c => c.id !== id));
+              if (type === 'country') setCountries(countries.filter(c => c.id !== id));
+          }
+      } catch (err) {
+          console.error(err);
+      }
   };
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
@@ -222,6 +279,12 @@ export default function SettingsPage() {
                           className={`pb-4 px-4 font-bold text-sm transition-colors border-b-2 ${activeTab === 'homepage' ? 'border-primary text-primary' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
                       >
                           <i className="fa-solid fa-home mr-2"></i> Homepage
+                      </button>
+                      <button 
+                          onClick={() => setActiveTab('taxonomies')} 
+                          className={`pb-4 px-4 font-bold text-sm transition-colors border-b-2 ${activeTab === 'taxonomies' ? 'border-primary text-primary' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+                      >
+                          <i className="fa-solid fa-tags mr-2"></i> Job Taxonomies
                       </button>
                   </div>
 
@@ -400,6 +463,88 @@ export default function SettingsPage() {
                                       {homeMsg && <span className={`text-xs font-bold ${homeMsg.includes('Error') || homeMsg.includes('failed') ? 'text-red-500' : 'text-green-600'} animate-pulse`}>{homeMsg}</span>}
                                   </div>
                               </form>
+                          </div>
+                      )}
+                      
+                      {activeTab === 'taxonomies' && (
+                          <div className="animate-in fade-in slide-in-from-bottom-2 relative z-10">
+                              <h3 className="font-heading font-bold text-xl text-darkBlue mb-6">Job Taxonomies</h3>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                  {/* Categories Panel */}
+                                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
+                                      <h4 className="font-bold text-darkBlue mb-4 flex items-center gap-2">
+                                          <i className="fa-solid fa-layer-group text-primary"></i> Job Categories
+                                      </h4>
+                                      <form onSubmit={(e) => handleAddTaxonomy('category', e)} className="flex gap-2 mb-4">
+                                          <input 
+                                              type="text" 
+                                              required
+                                              value={newCatName}
+                                              onChange={e => setNewCatName(e.target.value)}
+                                              placeholder="e.g. Blue Collar"
+                                              className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
+                                          />
+                                          <button type="submit" className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-blue-700">Add</button>
+                                      </form>
+                                      <ul className="space-y-2 max-h-64 overflow-y-auto pr-2">
+                                          {categories.length === 0 && <li className="text-xs text-slate-400">No categories found.</li>}
+                                          {categories.map(cat => (
+                                              <li key={cat.id} className="bg-white border border-slate-200 rounded-lg p-3 flex justify-between items-center shadow-sm">
+                                                  <span className="text-sm font-medium text-slate-800">{cat.name}</span>
+                                                  <button onClick={() => handleDeleteTaxonomy('category', cat.id)} className="text-red-400 hover:text-red-600 transition-colors" title="Delete">
+                                                      <i className="fa-solid fa-trash text-xs"></i>
+                                                  </button>
+                                              </li>
+                                          ))}
+                                      </ul>
+                                  </div>
+
+                                  {/* Countries Panel */}
+                                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
+                                      <h4 className="font-bold text-darkBlue mb-4 flex items-center gap-2">
+                                          <i className="fa-solid fa-earth-europe text-primary"></i> Job Countries
+                                      </h4>
+                                      <form onSubmit={(e) => handleAddTaxonomy('country', e)} className="flex gap-2 mb-4">
+                                          <input 
+                                              type="text" 
+                                              required
+                                              value={newCountryName}
+                                              onChange={e => setNewCountryName(e.target.value)}
+                                              placeholder="Country (e.g. Poland)"
+                                              className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
+                                          />
+                                          <input 
+                                              type="text" 
+                                              value={newCountryRegion}
+                                              onChange={e => setNewCountryRegion(e.target.value)}
+                                              placeholder="Region (optional)"
+                                              className="w-24 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
+                                          />
+                                          <button type="submit" className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-blue-700">Add</button>
+                                      </form>
+                                      <ul className="space-y-2 max-h-64 overflow-y-auto pr-2">
+                                          {countries.length === 0 && <li className="text-xs text-slate-400">No countries found.</li>}
+                                          {countries.map(country => (
+                                              <li key={country.id} className="bg-white border border-slate-200 rounded-lg p-3 flex justify-between items-center shadow-sm">
+                                                  <div>
+                                                      <span className="text-sm font-medium text-slate-800 block">{country.name}</span>
+                                                      {country.region && <span className="text-xs text-slate-400">Region: {country.region}</span>}
+                                                  </div>
+                                                  <button onClick={() => handleDeleteTaxonomy('country', country.id)} className="text-red-400 hover:text-red-600 transition-colors" title="Delete">
+                                                      <i className="fa-solid fa-trash text-xs"></i>
+                                                  </button>
+                                              </li>
+                                          ))}
+                                      </ul>
+                                  </div>
+                              </div>
+                              
+                              {taxMsg && (
+                                  <div className="mt-4 p-3 bg-blue-50 text-primary font-bold text-sm rounded-lg text-center animate-pulse border border-blue-100">
+                                      {taxMsg}
+                                  </div>
+                              )}
                           </div>
                       )}
                   </div>

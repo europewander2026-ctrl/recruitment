@@ -43,6 +43,8 @@ interface ApplicationNode {
   visa: string;
   file: string;
   timeAgg: string;
+  aiMatchScore?: number;
+  aiReasoning?: string;
 }
 
 // ----------------------------------------------------------------------
@@ -73,6 +75,18 @@ function SortableAppCard({ app }: { app: ApplicationNode }) {
           <h5 className="font-bold text-sm text-slate-800">{app.name}</h5>
           <p className="text-xs text-slate-500">{app.role}</p>
 
+          {app.aiMatchScore !== undefined && (
+              <div className="mt-2" title={app.aiReasoning || 'AI Match Score'}>
+                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                      app.aiMatchScore >= 90 ? 'bg-green-100 text-green-800' :
+                      app.aiMatchScore >= 70 ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                  }`}>
+                      <i className="fa-solid fa-robot mr-1"></i> {app.aiMatchScore}% Match
+                  </span>
+              </div>
+          )}
+
           {/* X-Ray Hover Lens */}
           <div className="absolute hidden group-hover:block z-[100] w-[280px] bg-slate-900/95 backdrop-blur-md border border-white/10 border-l-4 border-l-primary rounded-xl p-4 text-white shadow-[0_20px_50px_rgba(0,0,0,0.5)]" style={{ left: '105%', top: 0 }}>
               <div className="flex items-center gap-2 mb-2 border-b border-white/20 pb-2">
@@ -100,6 +114,11 @@ export default function RecruitmentOpsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [jobFilter, setJobFilter] = useState('all');
   const [stats, setStats] = useState({ totalCandidates: 0, activeJobs: 0, pendingReview: 0 });
+
+  // Taxonomies State
+  const [categories, setCategories] = useState<{id: string, name: string}[]>([]);
+  const [countries, setCountries] = useState<{id: string, name: string}[]>([]);
+  const [isLoadingTaxonomies, setIsLoadingTaxonomies] = useState(true);
   
   // Kanban State
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -123,7 +142,9 @@ export default function RecruitmentOpsPage() {
             exp: app.exp || 'N/A',
             visa: app.visaStatus || 'None',
             file: app.resumeUrl || 'N/A',
-            timeAgg: 'Just now'
+            timeAgg: 'Just now',
+            aiMatchScore: app.aiMatchScore,
+            aiReasoning: app.aiReasoning
           }));
           setApps(mapped);
         }
@@ -149,6 +170,21 @@ export default function RecruitmentOpsPage() {
         }
       })
       .catch(err => console.error('Error fetching stats', err));
+
+    // Fetch Taxonomies
+    Promise.all([
+      fetch('/api/taxonomies?type=category').then(r => r.json()),
+      fetch('/api/taxonomies?type=country').then(r => r.json())
+    ])
+    .then(([catData, countryData]) => {
+      if (catData.success) setCategories(catData.data.filter((c: any) => c.isActive));
+      if (countryData.success) setCountries(countryData.data.filter((c: any) => c.isActive));
+      setIsLoadingTaxonomies(false);
+    })
+    .catch(err => {
+      console.error('Error fetching taxonomies', err);
+      setIsLoadingTaxonomies(false);
+    });
   }, []);
 
   // Modal State
@@ -253,7 +289,14 @@ export default function RecruitmentOpsPage() {
           const job = jobs.find(j => j.id === id);
           if (job) setModalForm({ ...job, responsibilities: job.responsibilities || '' });
       } else {
-          setModalForm({ title: '', country: 'portugal', salary: '', category: 'Blue Collar', responsibilities: '', status: true });
+          setModalForm({ 
+            title: '', 
+            country: countries.length > 0 ? countries[0].name : '', 
+            salary: '', 
+            category: categories.length > 0 ? categories[0].name : '', 
+            responsibilities: '', 
+            status: true 
+          });
       }
       setIsModalOpen(true);
   };
@@ -476,7 +519,18 @@ export default function RecruitmentOpsPage() {
                           </div>
                           <div>
                               <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Country *</label>
-                              <input type="text" placeholder="e.g. Portugal, UAE" value={modalForm.country} onChange={e=>setModalForm({...modalForm, country: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 focus:outline-none focus:border-primary text-sm" />
+                              <select 
+                                value={modalForm.country} 
+                                onChange={e=>setModalForm({...modalForm, country: e.target.value})} 
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 focus:outline-none focus:border-primary text-sm appearance-none"
+                              >
+                                {isLoadingTaxonomies ? (
+                                  <option>Loading countries...</option>
+                                ) : (
+                                  countries.map(c => <option key={c.id} value={c.name}>{c.name}</option>)
+                                )}
+                                {countries.length === 0 && !isLoadingTaxonomies && <option value="">No countries configured</option>}
+                              </select>
                           </div>
                       </div>
                       
@@ -487,10 +541,17 @@ export default function RecruitmentOpsPage() {
                           </div>
                           <div>
                               <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Category</label>
-                              <select value={modalForm.category} onChange={e=>setModalForm({...modalForm, category: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 focus:outline-none focus:border-primary text-sm appearance-none">
-                                  <option>Blue Collar</option>
-                                  <option>White Collar</option>
-                                  <option>Skilled Trade</option>
+                              <select 
+                                value={modalForm.category} 
+                                onChange={e=>setModalForm({...modalForm, category: e.target.value})} 
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 focus:outline-none focus:border-primary text-sm appearance-none"
+                              >
+                                {isLoadingTaxonomies ? (
+                                  <option>Loading categories...</option>
+                                ) : (
+                                  categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)
+                                )}
+                                {categories.length === 0 && !isLoadingTaxonomies && <option value="">No categories configured</option>}
                               </select>
                           </div>
                       </div>

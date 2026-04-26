@@ -149,13 +149,25 @@ export default function ApplyPage() {
                                 <label className="block text-sm font-bold text-slate-700 mb-2">Preferred Country *</label>
                                 <select required value={formData.country} onChange={e=>setFormData({...formData, country: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-[#002366] text-sm">
                                     <option value="">Select a country</option>
-                                    <option value="Poland">Poland</option>
-                                    <option value="Czech Republic">Czech Republic</option>
-                                    <option value="Lithuania">Lithuania</option>
-                                    <option value="Latvia">Latvia</option>
-                                    <option value="Serbia">Serbia</option>
-                                    <option value="UAE">UAE</option>
-                                    <option value="Saudi Arabia">Saudi Arabia</option>
+                                    <optgroup label="Active European Placements">
+                                        <option value="Poland">Poland</option>
+                                        <option value="Czech Republic">Czech Republic</option>
+                                        <option value="Serbia">Serbia</option>
+                                        <option value="Lithuania">Lithuania</option>
+                                        <option value="Latvia">Latvia</option>
+                                    </optgroup>
+                                    <optgroup label="Middle East Placements">
+                                        <option value="UAE">United Arab Emirates (UAE)</option>
+                                        <option value="Saudi Arabia">Saudi Arabia</option>
+                                        <option value="Qatar">Qatar</option>
+                                        <option value="Oman">Oman</option>
+                                        <option value="Bahrain">Bahrain</option>
+                                        <option value="Kuwait">Kuwait</option>
+                                    </optgroup>
+                                    <optgroup label="Closed Programs">
+                                        <option value="Hungary" disabled>Hungary (Closed 2024)</option>
+                                        <option value="Croatia" disabled>Croatia (Closed 2025)</option>
+                                    </optgroup>
                                 </select>
                             </div>
                             <div>

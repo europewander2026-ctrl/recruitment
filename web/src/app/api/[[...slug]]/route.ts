@@ -16,6 +16,7 @@ import * as webhooksPayoneer from '@/controllers/webhooks/payoneer';
 
 // Other
 import * as applications from '@/controllers/applications';
+import * as applicationsScore from '@/controllers/applications/score';
 import * as applicationsStatus from '@/controllers/applications/status';
 import * as content from '@/controllers/content';
 import * as downloadDocument from '@/controllers/download-document';
@@ -24,6 +25,7 @@ import * as notifications from '@/controllers/notifications';
 import * as settingsGeneral from '@/controllers/settings/general';
 import * as settingsProfile from '@/controllers/settings/profile';
 import * as stats from '@/controllers/stats';
+import * as taxonomies from '@/controllers/taxonomies';
 import * as verifyCode from '@/controllers/verify-code';
 
 const routes: Record<string, any> = {
@@ -36,6 +38,7 @@ const routes: Record<string, any> = {
   'webhooks/nomadpay': webhooksNomadpay,
   'webhooks/payoneer': webhooksPayoneer,
   'applications': applications,
+  'applications/score': applicationsScore,
   'applications/status': applicationsStatus,
   'content': content,
   'download-document': downloadDocument,
@@ -45,6 +48,7 @@ const routes: Record<string, any> = {
   'settings/general': settingsGeneral,
   'settings/profile': settingsProfile,
   'stats': stats,
+  'taxonomies': taxonomies,
   'verify-code': verifyCode,
 };
 

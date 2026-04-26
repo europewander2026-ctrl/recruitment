@@ -102,6 +102,15 @@ export async function POST(req: Request) {
       }
     });
 
+    // Trigger AI Scoring in background
+    const protocol = req.headers.get('x-forwarded-proto') || 'http';
+    const host = req.headers.get('host') || 'localhost:3000';
+    fetch(`${protocol}://${host}/api/applications/score`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: newApp.id })
+    }).catch(err => console.error('Background AI scoring failed to start:', err));
+
     return NextResponse.json({ success: true, data: newApp });
   } catch (error) {
     console.error('Create application error:', error);
