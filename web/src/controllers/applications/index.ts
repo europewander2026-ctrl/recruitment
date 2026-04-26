@@ -72,3 +72,39 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+export async function POST(req: Request) {
+  try {
+    const data = await req.json();
+
+    const roleStr = data.industry && data.country 
+        ? `${data.industry} - ${data.country}` 
+        : data.industry || 'Candidate';
+
+    const newApp = await prisma.application.create({
+      data: {
+        name: data.fullName || 'Anonymous',
+        role: roleStr,
+        location: data.residence,
+        exp: data.experience,
+        edu: data.education,
+        industry: data.industry,
+        skills: {
+          nationality: data.nationality,
+          dob: data.dob,
+          email: data.email,
+          phone: data.phone,
+          passport: data.passport,
+          passportExpiry: data.passportExpiry,
+          countryPreference: data.country
+        },
+        status: 'pending',
+      }
+    });
+
+    return NextResponse.json({ success: true, data: newApp });
+  } catch (error) {
+    console.error('Create application error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}

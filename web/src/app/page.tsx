@@ -7,8 +7,32 @@ import { ShieldCheck, Globe, FileLock } from 'lucide-react';
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
+  const [config, setConfig] = useState<any>({
+      home_hero_text: "Work in Europe.",
+      home_hero_highlight: "Live Your Potential.",
+      home_journey_text: "A perfectly transparent, three-step linear process designed to secure your global career flawlessly.",
+      home_fraud_warning: "Fraudsters sometimes impersonate recruitment agencies. Eurovanta Talent will NEVER ask for payment before you receive a verified offer letter, contact you through WhatsApp as official communication, or issue letters for Hungary or Croatia (both programmes are permanently closed)."
+  });
 
   useEffect(() => {
+    fetch('/api/config')
+      .then(res => res.json())
+      .then(data => {
+          if (data.success && data.data) {
+              const newConfig = {
+                  home_hero_text: "Work in Europe.",
+                  home_hero_highlight: "Live Your Potential.",
+                  home_journey_text: "A perfectly transparent, three-step linear process designed to secure your global career flawlessly.",
+                  home_fraud_warning: "Fraudsters sometimes impersonate recruitment agencies. Eurovanta Talent will NEVER ask for payment before you receive a verified offer letter, contact you through WhatsApp as official communication, or issue letters for Hungary or Croatia (both programmes are permanently closed)."
+              };
+              data.data.forEach((item: any) => {
+                  newConfig[item.key as keyof typeof newConfig] = item.value;
+              });
+              setConfig(newConfig);
+          }
+      })
+      .catch(err => console.error("Error fetching config", err));
+      
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
@@ -40,7 +64,7 @@ export default function LandingPage() {
                     <Link href="/verify" className="hidden md:block text-sm font-bold text-primary hover:text-blue-700 transition-colors">
                         Verify Document
                     </Link>
-                    <Link href="/login" className="bg-[#002366] hover:bg-blue-900 text-white hover:text-amber-500 px-5 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-blue-500/30 transition-all">
+                    <Link href="/login" className="bg-brandNavy hover:bg-blue-900 text-white hover:text-brandGold px-5 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-blue-500/30 transition-all">
                         Admin Login
                     </Link>
                 </div>
@@ -61,13 +85,13 @@ export default function LandingPage() {
                             Trusted European Recruitment Agency
                         </div>
                         <h1 className="font-heading font-bold text-5xl lg:text-7xl text-darkBlue leading-tight mb-6 tracking-tight">
-                            Work in Europe. <br className="hidden lg:block" /><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">Live Your Potential.</span>
+                            {config.home_hero_text} <br className="hidden lg:block" /><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">{config.home_hero_highlight}</span>
                         </h1>
                         <p className="text-slate-500 text-lg mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
                             Eurovanta Talent connects skilled professionals with verified employers across Europe. From Poland to Latvia, we place real people in real jobs — with full documentation, legal support, and a transparent process from application to arrival.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-10">
-                            <Link href="#jobs" className="w-full sm:w-auto px-8 py-4 bg-[#002366] hover:bg-blue-900 text-white hover:text-amber-500 font-bold rounded-full shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-1 transition-all">
+                            <Link href="#jobs" className="w-full sm:w-auto px-8 py-4 bg-brandNavy hover:bg-blue-900 text-white hover:text-brandGold font-bold rounded-full shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-1 transition-all">
                                 Browse Open Positions
                             </Link>
                             <Link href="/verify" className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 font-bold rounded-full border border-slate-200 hover:bg-slate-50 transition-colors">
@@ -138,8 +162,8 @@ export default function LandingPage() {
                     {/* Card 1 */}
                     <div className="bg-slate-50 rounded-3xl p-8 border border-slate-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
-                        <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-[#002366] transition-colors">
-                            <ShieldCheck className="w-10 h-10 text-[#002366] group-hover:text-amber-500 transition-colors" />
+                        <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-brandNavy transition-colors">
+                            <ShieldCheck className="w-10 h-10 text-brandNavy group-hover:text-brandGold transition-colors" />
                         </div>
                         <h3 className="font-bold text-xl text-darkBlue mb-3">Verified Placements</h3>
                         <p className="text-slate-500 text-sm leading-relaxed">
@@ -149,8 +173,8 @@ export default function LandingPage() {
                     {/* Card 2 */}
                     <div className="bg-slate-50 rounded-3xl p-8 border border-slate-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
-                        <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-[#002366] transition-colors">
-                            <Globe className="w-10 h-10 text-[#002366] group-hover:text-amber-500 transition-colors" />
+                        <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-brandNavy transition-colors">
+                            <Globe className="w-10 h-10 text-brandNavy group-hover:text-brandGold transition-colors" />
                         </div>
                         <h3 className="font-bold text-xl text-darkBlue mb-3">Global Reach</h3>
                         <p className="text-slate-500 text-sm leading-relaxed">
@@ -160,8 +184,8 @@ export default function LandingPage() {
                     {/* Card 3 */}
                     <div className="bg-slate-50 rounded-3xl p-8 border border-slate-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
-                        <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-[#002366] transition-colors">
-                            <FileLock className="w-10 h-10 text-[#002366] group-hover:text-amber-500 transition-colors" />
+                        <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-brandNavy transition-colors">
+                            <FileLock className="w-10 h-10 text-brandNavy group-hover:text-brandGold transition-colors" />
                         </div>
                         <h3 className="font-bold text-xl text-darkBlue mb-3">Secure Documents</h3>
                         <p className="text-slate-500 text-sm leading-relaxed">
@@ -180,7 +204,7 @@ export default function LandingPage() {
              <div className="container mx-auto px-6 lg:px-12 relative z-10">
                 <div className="text-center max-w-2xl mx-auto mb-20">
                     <h2 className="font-heading font-bold text-3xl lg:text-4xl text-darkBlue mb-4">The Candidate Journey</h2>
-                    <p className="text-slate-500 leading-relaxed">A perfectly transparent, three-step linear process designed to secure your global career flawlessly.</p>
+                    <p className="text-slate-500 leading-relaxed">{config.home_journey_text}</p>
                 </div>
 
                 <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-12 relative">
@@ -229,14 +253,14 @@ export default function LandingPage() {
                         <div>
                             <h3 className="text-xl font-bold text-red-700 mb-2">Protect Yourself from Fraud</h3>
                             <p className="text-slate-600 text-sm leading-relaxed mb-4">
-                                Fraudsters sometimes impersonate recruitment agencies. <strong>Eurovanta Talent will NEVER</strong> ask for payment before you receive a verified offer letter, contact you through WhatsApp as official communication, or issue letters for Hungary or Croatia (both programmes are permanently closed).
+                                <strong>Eurovanta Talent will NEVER</strong> {config.home_fraud_warning.replace('Fraudsters sometimes impersonate recruitment agencies. Eurovanta Talent will NEVER ', '')}
                             </p>
                             <p className="text-sm font-bold text-slate-700">If something does not feel right — stop and verify at <a href="mailto:verify@eurovantatalent.com" className="text-primary hover:underline">verify@eurovantatalent.com</a></p>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-[#002366] rounded-[3rem] p-12 lg:p-20 text-center relative overflow-hidden shadow-[0_20px_50px_rgba(13,95,183,0.2)]">
+                <div className="bg-brandNavy rounded-[3rem] p-12 lg:p-20 text-center relative overflow-hidden shadow-[0_20px_50px_rgba(13,95,183,0.2)]">
                     <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-primary/20 to-transparent pointer-events-none"></div>
                     <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-blue-500/20 rounded-full filter blur-[80px] pointer-events-none"></div>
                     <div className="absolute -top-20 -right-20 w-80 h-80 bg-primary/30 rounded-full filter blur-[80px] pointer-events-none"></div>
@@ -246,7 +270,7 @@ export default function LandingPage() {
                         <p className="text-blue-100 text-lg mb-10 leading-relaxed max-w-2xl mx-auto">
                             Our public portal allows you to instantly verify the authenticity and status of any Eurovanta Talent offer letter or contract.
                         </p>
-                        <Link href="/verify" className="inline-block px-10 py-5 bg-[#002366] border border-white/20 text-white font-bold rounded-full text-lg shadow-xl hover:scale-105 hover:bg-blue-900 hover:text-amber-500 hover:shadow-2xl hover:shadow-white/20 transition-all">
+                        <Link href="/verify" className="inline-block px-10 py-5 bg-brandNavy border border-white/20 text-white font-bold rounded-full text-lg shadow-xl hover:scale-105 hover:bg-blue-900 hover:text-brandGold hover:shadow-2xl hover:shadow-white/20 transition-all">
                             Access Verification Portal
                         </Link>
                     </div>
@@ -281,36 +305,44 @@ export default function LandingPage() {
         </section>
 
         {/* Global Footer */}
-        <footer className="bg-white border-t border-slate-200 pt-16 pb-8">
+        <footer className="bg-brandNavy text-white border-t border-slate-200 pt-16 pb-8">
             <div className="container mx-auto px-6 lg:px-12">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-12">
                     <div className="text-center md:text-left">
-                        <Link href="/" className="font-heading font-bold text-2xl tracking-tight text-darkBlue">
-                            <Image src="/logo.png" alt="Eurovanta Talent Logo" width={220} height={55} className="object-contain" />
+                        <Link href="/" className="font-heading font-bold text-2xl tracking-tight text-white mb-4 block">
+                            <Image src="/favicon.png" alt="Eurovanta Talent Logo" width={64} height={64} className="object-contain" />
                         </Link>
-                        <p className="text-slate-500 text-sm mt-2">Connecting Talent with Europe</p>
+                        <p className="text-slate-300 text-sm mt-4 max-w-sm">Eurovanta Talent connects skilled professionals with verified employers across Europe and the Middle East.</p>
                     </div>
-                    <div className="flex flex-wrap justify-center gap-6 text-sm text-slate-500 font-medium">
-                        <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-                        <Link href="/jobs" className="hover:text-primary transition-colors">Available Positions</Link>
-                        <Link href="/jobs" className="hover:text-primary transition-colors">Apply Now</Link>
-                        <Link href="/verify" className="hover:text-primary transition-colors">Verify Your Letter</Link>
-                        <Link href="/legal/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
-                        <Link href="/legal/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>
-                        <Link href="/legal/cookie-policy" className="hover:text-primary transition-colors">Cookie Policy</Link>
-                        <Link href="/legal/gdpr-policy" className="hover:text-primary transition-colors">GDPR Policy</Link>
+                    
+                    <div className="flex flex-col sm:flex-row gap-12 text-sm">
+                        <div>
+                            <h4 className="font-bold text-white mb-4 uppercase tracking-widest text-xs">Quick Links</h4>
+                            <ul className="space-y-2 text-slate-300 font-medium">
+                                <li><Link href="/" className="hover:text-brandGold transition-colors">Home</Link></li>
+                                <li><Link href="/jobs" className="hover:text-brandGold transition-colors">Available Positions</Link></li>
+                                <li><Link href="/jobs" className="hover:text-brandGold transition-colors">Apply Now</Link></li>
+                                <li><Link href="/verify" className="hover:text-brandGold transition-colors">Verify Your Letter</Link></li>
+                                <li><Link href="/#contact" className="hover:text-brandGold transition-colors">Contact</Link></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 className="font-bold text-white mb-4 uppercase tracking-widest text-xs">Legal</h4>
+                            <ul className="space-y-2 text-slate-300 font-medium">
+                                <li><Link href="/legal/privacy-policy" className="hover:text-brandGold transition-colors">Privacy Policy</Link></li>
+                                <li><Link href="/legal/terms-of-service" className="hover:text-brandGold transition-colors">Terms of Service</Link></li>
+                                <li><Link href="/legal/cookie-policy" className="hover:text-brandGold transition-colors">Cookie Policy</Link></li>
+                                <li><Link href="/legal/gdpr-policy" className="hover:text-brandGold transition-colors">GDPR Policy</Link></li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                
-                <div className="text-center mb-8">
-                    <p className="text-sm font-bold text-slate-600">Poland | Czech Republic | Serbia | Lithuania | Latvia</p>
                 </div>
 
                 <div className="text-center text-xs text-slate-400 max-w-4xl mx-auto mb-8">
                     <p>Eurovanta Talent is a registered recruitment agency operating in compliance with EU employment and data protection regulations. We do not charge placement fees. A document handling fee of €25 applies only after successful candidate selection and letter verification.</p>
                 </div>
 
-                <div className="text-center text-sm text-slate-400 border-t border-slate-200 pt-8">
+                <div className="text-center text-sm text-slate-400 border-t border-slate-700/50 pt-8">
                     &copy; {new Date().getFullYear()} Eurovanta Talent. All Rights Reserved.
                 </div>
             </div>

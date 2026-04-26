@@ -20,6 +20,7 @@ import {
   useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Bell } from 'lucide-react';
 
 interface Job {
   id: string;
@@ -312,7 +313,7 @@ export default function RecruitmentOpsPage() {
                   {/* Notification Bell Hub */}
                   <div className="relative">
                       <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="relative p-2 text-slate-400 hover:text-primary transition-colors focus:outline-none">
-                          <i className={`fa-solid fa-bell text-xl ${unreadCount > 0 ? 'animate-pulse text-darkBlue' : ''}`}></i>
+                          <Bell className={`w-6 h-6 ${unreadCount > 0 ? 'animate-pulse text-darkBlue' : ''}`} />
                           {unreadCount > 0 && (
                               <span className="absolute top-1 right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></span>
                           )}
@@ -475,14 +476,7 @@ export default function RecruitmentOpsPage() {
                           </div>
                           <div>
                               <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Country *</label>
-                              <select value={modalForm.country} onChange={e=>setModalForm({...modalForm, country: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 focus:outline-none focus:border-primary text-sm appearance-none">
-                                  <option value="portugal">Portugal</option>
-                                  <option value="denmark">Denmark</option>
-                                  <option value="germany">Germany</option>
-                                  <option value="norway">Norway</option>
-                                  <option value="hungary">Hungary</option>
-                                  <option value="uae">UAE</option>
-                              </select>
+                              <input type="text" placeholder="e.g. Portugal, UAE" value={modalForm.country} onChange={e=>setModalForm({...modalForm, country: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 focus:outline-none focus:border-primary text-sm" />
                           </div>
                       </div>
                       

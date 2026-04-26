@@ -27,22 +27,21 @@ export default function Sidebar() {
             <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto scrollbar-hide">
                 <p className="text-xs font-bold text-slate-400 uppercase px-4 mb-3 tracking-wider">Main Menu</p>
                 
-                {/* Pointing Dashboard directly to /applications as requested */}
-                <Link href="/applications" className={`nav-link flex items-center gap-3 p-3 rounded-xl transition-colors ${pathname === '/dashboard' ? 'text-primary bg-blue-50 font-medium border-l-4 border-primary' : 'text-slate-500 hover:text-primary hover:bg-blue-50'}`}>
+                <Link href="/admin/dashboard" className={`nav-link flex items-center gap-3 p-3 rounded-xl transition-colors ${pathname === '/admin/dashboard' ? 'text-primary bg-blue-50 font-medium border-l-4 border-primary' : 'text-slate-500 hover:text-primary hover:bg-blue-50'}`}>
                     <i className="fa-solid fa-grid-2 w-5 text-center"></i> Dashboard
                 </Link>
                 
-                <Link href="/applications" className={`nav-link flex items-center gap-3 p-3 rounded-xl transition-colors ${pathname === '/applications' ? 'text-primary bg-blue-50 font-medium border-l-4 border-primary' : 'text-slate-500 hover:text-primary hover:bg-blue-50'}`}>
+                <Link href="/admin/applications" className={`nav-link flex items-center gap-3 p-3 rounded-xl transition-colors ${pathname === '/admin/applications' ? 'text-primary bg-blue-50 font-medium border-l-4 border-primary' : 'text-slate-500 hover:text-primary hover:bg-blue-50'}`}>
                     <i className="fa-solid fa-users w-5 text-center"></i> Applications
                 </Link>
                 
-                <Link href="/recruitment" className={`nav-link flex items-center gap-3 p-3 rounded-xl transition-colors ${pathname === '/recruitment' ? 'text-primary bg-blue-50 font-medium border-l-4 border-primary' : 'text-slate-500 hover:text-primary hover:bg-blue-50'}`}>
+                <Link href="/admin/recruitment" className={`nav-link flex items-center gap-3 p-3 rounded-xl transition-colors ${pathname === '/admin/recruitment' ? 'text-primary bg-blue-50 font-medium border-l-4 border-primary' : 'text-slate-500 hover:text-primary hover:bg-blue-50'}`}>
                     <i className="fa-solid fa-briefcase w-5 text-center"></i> Recruitment
                 </Link>
 
                 <p className="text-xs font-bold text-slate-400 uppercase px-4 mt-8 mb-3 tracking-wider">System</p>
                 
-                <Link href="/settings" className={`nav-link flex items-center gap-3 p-3 rounded-xl transition-colors ${pathname.startsWith('/settings') ? 'text-primary bg-blue-50 font-medium border-l-4 border-primary' : 'text-slate-500 hover:text-primary hover:bg-blue-50'}`}>
+                <Link href="/admin/settings" className={`nav-link flex items-center gap-3 p-3 rounded-xl transition-colors ${pathname.startsWith('/admin/settings') ? 'text-primary bg-blue-50 font-medium border-l-4 border-primary' : 'text-slate-500 hover:text-primary hover:bg-blue-50'}`}>
                     <i className="fa-solid fa-gear w-5 text-center"></i> Settings
                 </Link>
 

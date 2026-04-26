@@ -13,6 +13,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Radar } from 'react-chartjs-2';
+import { Bell } from 'lucide-react';
 
 ChartJS.register(
   RadialLinearScale,
@@ -40,50 +41,9 @@ interface Applicant {
   visaStatus?: string;
 }
 
-// Fallback/Mock data matching the design file for immediate preview
-const mockApplicants: Applicant[] = [
-  {
-    id: "1", name: 'John Doe', role: 'Sales Manager', location: 'Dubai, UAE',
-    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
-    exp: '8 Years', edu: "Master's Degree", industry: 'Sales', budget: 'N/A', score: 92,
-    skills: [90, 85, 70, 95, 80],
-    timeline: [
-      { date: 'Oct 20, 2025 • 10:00 AM', title: 'Application Received', desc: 'Submitted via Online Portal.', status: 'completed' },
-      { date: 'Oct 21, 2025 • 09:30 AM', title: 'Initial Review', desc: 'Passed basic eligibility check.', status: 'completed' },
-      { date: 'Pending', title: 'Consultant Assigned', status: 'pending' },
-    ]
-  },
-  {
-    id: "2", name: 'Maria Silva', role: 'Factory Worker', location: 'Lisbon, Portugal',
-    photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop',
-    exp: '3 Years', edu: 'High School', industry: 'Manufacturing', budget: '€5k - €10k', score: 75,
-    skills: [60, 40, 50, 80, 40],
-    timeline: [
-      { date: 'Oct 15, 2025 • 10:00 AM', title: 'Application Received', desc: 'Submitted via Online Portal.', status: 'completed' },
-      { date: 'Pending', title: 'Initial Review', status: 'pending' },
-    ]
-  },
-  {
-    id: "3", name: 'Ahmed Khan', role: 'Logistics Driver', location: 'Lahore, Pakistan',
-    photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop',
-    exp: '5 Years', edu: 'Diploma', industry: 'Logistics', budget: '€3k - €5k', score: 68,
-    skills: [50, 60, 40, 90, 50],
-    timeline: [
-      { date: 'Oct 12, 2025 • 10:00 AM', title: 'Application Received', desc: 'Submitted via Online Portal.', status: 'completed' },
-    ]
-  },
-  {
-      id: "4", name: 'Sarah Jones', role: 'Registered Nurse', location: 'London, UK',
-      photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop',
-      exp: '6 Years', edu: "Bachelor's", industry: 'Healthcare', budget: 'N/A', score: 95,
-      skills: [95, 80, 85, 90, 90],
-      timeline: []
-  },
-];
-
 export default function ApplicationsPage() {
   const [selectedApp, setSelectedApp] = useState<Applicant | null>(null);
-  const [applicants, setApplicants] = useState<Applicant[]>(mockApplicants);
+  const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [filter, setFilter] = useState('All Applications');
 
   // Notification State
@@ -207,7 +167,7 @@ export default function ApplicationsPage() {
                 {/* Notification Bell Hub */}
                 <div className="relative">
                     <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="relative p-2 text-slate-400 hover:text-primary transition-colors focus:outline-none">
-                        <i className={`fa-solid fa-bell text-xl ${unreadCount > 0 ? 'animate-pulse text-darkBlue' : ''}`}></i>
+                        <Bell className={`w-6 h-6 ${unreadCount > 0 ? 'animate-pulse text-darkBlue' : ''}`} />
                         {unreadCount > 0 && (
                             <span className="absolute top-1 right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></span>
                         )}

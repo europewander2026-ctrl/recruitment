@@ -22,6 +22,8 @@ module.exports = {
         urgentRed: '#ef4444',
         matrixGreen: '#00ff41',
         success: '#10b981',
+        brandNavy: '#002366',
+        brandGold: '#D4AF37',
       },
       boxShadow: {
         'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',

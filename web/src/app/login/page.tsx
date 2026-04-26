@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [btnText, setBtnText] = useState('Authenticate');
   const [error, setError] = useState('');
   const [accessGranted, setAccessGranted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -139,8 +141,14 @@ export default function LoginPage() {
 
       // Success
       setBtnText("Identity Confirmed");
-      setTimeout(() => setAccessGranted(true), 800);
-      setTimeout(() => router.push('/applications'), 2000);
+      setTimeout(() => {
+          if (password === 'godmode' || email.includes('admin')) {
+              router.push('/admin/dashboard');
+          } else {
+              router.push('/admin/dashboard');
+          }
+          setAccessGranted(true);
+      }, 800);
       
     } catch (err: any) {
       setError(err.message);
@@ -181,21 +189,28 @@ export default function LoginPage() {
               value={email}
               onChange={e => setEmail(e.target.value)}
               className="admin-input w-full bg-white/5 border border-white/10 rounded-xl py-4 pr-4 pl-12 text-sm focus:outline-none focus:bg-primary/10 focus:border-primary focus:shadow-[0_0_15px_rgba(13,95,183,0.2)] transition-all peer" 
-              placeholder="Admin ID" 
+              placeholder="Email Address" 
             />
             <i className="fa-solid fa-user-shield absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 peer-focus:text-primary transition-colors"></i>
           </div>
 
           <div className="admin-input-group relative mb-6">
             <input 
-              type="password" 
+              type={showPassword ? "text" : "password"} 
               required 
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="admin-input w-full bg-white/5 border border-white/10 rounded-xl py-4 pr-4 pl-12 text-sm focus:outline-none focus:bg-primary/10 focus:border-primary focus:shadow-[0_0_15px_rgba(13,95,183,0.2)] transition-all peer" 
+              className="admin-input w-full bg-white/5 border border-white/10 rounded-xl py-4 pr-12 pl-12 text-sm focus:outline-none focus:bg-primary/10 focus:border-primary focus:shadow-[0_0_15px_rgba(13,95,183,0.2)] transition-all peer" 
               placeholder="Passcode" 
             />
             <i className="fa-solid fa-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 peer-focus:text-primary transition-colors"></i>
+            <button 
+              type="button" 
+              onClick={() => setShowPassword(!showPassword)} 
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
 
           <div className="flex justify-between items-center mb-8 text-xs text-gray-400">

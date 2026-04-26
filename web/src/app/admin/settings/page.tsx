@@ -3,6 +3,7 @@ import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
+import { Bell } from 'lucide-react';
 
 interface Notification {
     id: string;
@@ -12,7 +13,7 @@ interface Notification {
 }
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<'profile' | 'platform' | 'cms'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'platform' | 'cms' | 'homepage'>('profile');
   
   // Profile State
   const [email, setEmail] = useState('');
@@ -28,6 +29,15 @@ export default function SettingsPage() {
   const [cmsTitle, setCmsTitle] = useState('Privacy Policy');
   const [cmsContent, setCmsContent] = useState('');
   const [cmsMsg, setCmsMsg] = useState('');
+
+  // Homepage Config State
+  const [homeConfig, setHomeConfig] = useState({
+      home_hero_text: '',
+      home_hero_highlight: '',
+      home_journey_text: '',
+      home_fraud_warning: ''
+  });
+  const [homeMsg, setHomeMsg] = useState('');
 
   // Notification State
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -47,6 +57,19 @@ export default function SettingsPage() {
                     setCmsContent('');
                 }
             });
+     } else if (activeTab === 'homepage') {
+         fetch('/api/config')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    const newConfig = { ...homeConfig };
+                    data.data.forEach((item: any) => {
+                        newConfig[item.key as keyof typeof newConfig] = item.value;
+                    });
+                    setHomeConfig(newConfig);
+                }
+            })
+            .catch(err => console.error("Error fetching home config:", err));
      }
   }, [activeTab, cmsSlug]);
 
@@ -65,6 +88,23 @@ export default function SettingsPage() {
           setCmsMsg("Operation failed.");
       }
       setTimeout(() => setCmsMsg(''), 3000);
+  };
+
+  const handleHomeUpdate = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setHomeMsg("Saving...");
+      try {
+          const res = await fetch('/api/config', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(homeConfig)
+          });
+          if (res.ok) setHomeMsg("Content saved successfully!");
+          else setHomeMsg("Error saving content.");
+      } catch (err) {
+          setHomeMsg("Operation failed.");
+      }
+      setTimeout(() => setHomeMsg(''), 3000);
   };
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
@@ -117,7 +157,7 @@ export default function SettingsPage() {
                   {/* Epic 4.4: Notification Bell Hub */}
                   <div className="relative">
                       <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="relative p-2 text-slate-400 hover:text-primary transition-colors focus:outline-none">
-                          <i className={`fa-solid fa-bell text-xl ${unreadCount > 0 ? 'animate-pulse text-darkBlue' : ''}`}></i>
+                          <Bell className={`w-6 h-6 ${unreadCount > 0 ? 'animate-pulse text-darkBlue' : ''}`} />
                           {unreadCount > 0 && (
                               <span className="absolute top-1 right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></span>
                           )}
@@ -176,6 +216,12 @@ export default function SettingsPage() {
                           className={`pb-4 px-4 font-bold text-sm transition-colors border-b-2 ${activeTab === 'cms' ? 'border-primary text-primary' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
                       >
                           <i className="fa-solid fa-file-contract mr-2"></i> Legal Content
+                      </button>
+                      <button 
+                          onClick={() => setActiveTab('homepage')} 
+                          className={`pb-4 px-4 font-bold text-sm transition-colors border-b-2 ${activeTab === 'homepage' ? 'border-primary text-primary' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+                      >
+                          <i className="fa-solid fa-home mr-2"></i> Homepage
                       </button>
                   </div>
 
@@ -301,6 +347,57 @@ export default function SettingsPage() {
                                           <i className="fa-solid fa-save"></i> Save Content
                                       </button>
                                       {cmsMsg && <span className={`text-xs font-bold ${cmsMsg.includes('Error') || cmsMsg.includes('failed') ? 'text-red-500' : 'text-green-600'} animate-pulse`}>{cmsMsg}</span>}
+                                  </div>
+                              </form>
+                          </div>
+                      )}
+                      {activeTab === 'homepage' && (
+                          <div className="animate-in fade-in slide-in-from-bottom-2 relative z-10">
+                              <h3 className="font-heading font-bold text-xl text-darkBlue mb-6">Homepage Content Management</h3>
+                              
+                              <form onSubmit={handleHomeUpdate} className="space-y-6 max-w-4xl">
+                                  <div>
+                                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Hero Text</label>
+                                      <input 
+                                          type="text"
+                                          value={homeConfig.home_hero_text}
+                                          onChange={e => setHomeConfig({...homeConfig, home_hero_text: e.target.value})}
+                                          className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary transition-colors"
+                                      />
+                                  </div>
+                                  <div>
+                                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Hero Highlight</label>
+                                      <input 
+                                          type="text"
+                                          value={homeConfig.home_hero_highlight}
+                                          onChange={e => setHomeConfig({...homeConfig, home_hero_highlight: e.target.value})}
+                                          className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary transition-colors"
+                                      />
+                                  </div>
+                                  <div>
+                                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Candidate Journey Text</label>
+                                      <textarea 
+                                          rows={3}
+                                          value={homeConfig.home_journey_text}
+                                          onChange={e => setHomeConfig({...homeConfig, home_journey_text: e.target.value})}
+                                          className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-primary transition-colors font-mono"
+                                      />
+                                  </div>
+                                  <div>
+                                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Fraud Warning Text</label>
+                                      <textarea 
+                                          rows={4}
+                                          value={homeConfig.home_fraud_warning}
+                                          onChange={e => setHomeConfig({...homeConfig, home_fraud_warning: e.target.value})}
+                                          className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-4 text-sm focus:outline-none focus:border-primary transition-colors font-mono"
+                                      />
+                                  </div>
+
+                                  <div className="flex items-center gap-4 pt-4">
+                                      <button type="submit" className="px-8 py-3 bg-primary text-white font-bold text-sm tracking-wider uppercase rounded-xl hover:bg-blue-700 shadow-md shadow-blue-500/20 transition-all flex items-center gap-2">
+                                          <i className="fa-solid fa-save"></i> Save Content
+                                      </button>
+                                      {homeMsg && <span className={`text-xs font-bold ${homeMsg.includes('Error') || homeMsg.includes('failed') ? 'text-red-500' : 'text-green-600'} animate-pulse`}>{homeMsg}</span>}
                                   </div>
                               </form>
                           </div>
